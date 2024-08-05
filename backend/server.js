@@ -8,7 +8,8 @@ import connectMongoDB from "./db/connectMongoDB..db.js";
 const app=express();
 
 app.use("/api/auth",authRoutes);
-
+app.use(express.json());
+app.use(express.urlencoded({extended:true}))
 const PORT = process.env.PORT || 8000;
 
 
