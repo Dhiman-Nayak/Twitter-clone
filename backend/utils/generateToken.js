@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const generateTokenandSetCookie = async (id, res) => {
+const generateTokenandSetCookie = (id, res) => {
   const token = jwt.sign(
     {
       id,

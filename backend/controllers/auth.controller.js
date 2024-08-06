@@ -57,6 +57,8 @@ const login = async (req, res) => {
         return res.status(401).json({ error: "Wrong Password" });
       }
       const token = generateTokenandSetCookie(user._id);
+      // console.log(token);
+      
       res
         .status(200)
         .cookie("jwt", token, {
@@ -74,7 +76,26 @@ const login = async (req, res) => {
   }
 };
 const logout = async (req, res) => {
-  
+  try {
+    res.cookie('jwt', '', {
+      maxAge: 0, // Set the cookie to expire immediately
+      httpOnly: true
+    });
+    res.status(200).json({ message: 'User logged out successfully' });
+  } catch (error) {
+    console.log("Error in logout controller :", error.message);
+    return res.status(500).json({ error: "Internal sever error" });
+  }
 };
 
-export { signup, login, logout };
+const getMe= async (req,res)=>{
+  try {
+    const user = await User.findById(req.user._id).select("-password")
+    res.status(200).json(user)
+  } catch (error) {
+    console.log("Error in getMe controller :", error.message);
+    return res.status(500).json({ error: "Internal sever error" });
+  }
+}
+
+export { signup, login, logout ,getMe};

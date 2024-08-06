@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import authRoutes from "./routes/auth.routes.js";
+import userRoutes from "./routes/user.routes.js";
 import connectMongoDB from "./db/connectMongoDB.db.js";
 const app=express();
 
@@ -19,6 +20,7 @@ app.use(express.urlencoded({extended:true,limit:"16Kb"}));
 app.use(express.static("public"));
 app.use(cookieParser())
 app.use("/api/auth",authRoutes);
+app.use("/api/users",userRoutes);
 const PORT = process.env.PORT || 3000;
 
 
