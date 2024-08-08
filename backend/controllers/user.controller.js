@@ -35,12 +35,8 @@ const followUnfollowUser = async (req, res) => {
         await User.findByIdAndUpdate(id,{$pull:{followers:req.user._id}});
         await User.findByIdAndUpdate(req.user._id,{$pull:{following:id}});
 
-        //for notification
-        const newNotification = new Notification({
-            type:"follow",
-            from:
-        })
         
+
         res.status(200).json({"message":"User unfollowed successfully"})
     }else{
         //follow         
@@ -49,10 +45,11 @@ const followUnfollowUser = async (req, res) => {
        
         //for notification
         const newNotification = new Notification({
-            type:"follow",
-            from: req.user._id,
-            
-        })
+          type:"follow",
+          from: req.user._id,
+          to:userToModify._id,
+      })
+      await newNotification.save();
         res.status(200).json({"message":"User followed successfully"})
     }
   } catch (error) {
@@ -61,4 +58,58 @@ const followUnfollowUser = async (req, res) => {
   }
 };
 
-export { getUserProfile, followUnfollowUser };
+const getSuggestedUser=async (req,res)=>{
+  try {
+    const userId= req.user._id;
+    const usersFollowedByMe= await User.findById(userId).select("following")
+    const users = await User.aggregate([
+      {
+        $match:{
+          _id:{$ne:userId}
+        }
+      },
+      {$sample:{size:15}}
+
+    ])
+    
+    const filteredUsers = users.filter(user=>!usersFollowedByMe.following.includes(user._id))
+    const suggestedUser = filteredUsers.slice(0,4)
+
+    suggestedUser.forEach((user)=>(user.password=null))
+
+    res.status(200).json(suggestedUser)
+  } catch (error) {
+    console.log("Error in getSuggestedUser controller :", error.message);
+    return res.status(500).json({ error: "Internal sever error" });
+  
+  }
+}
+
+const updateUser=async ()=>{
+try {
+  const {fullName,email,bio,link,currentPassword,newPassword} = req.body;
+  let {profileImg,coverImg} = req.body;
+
+  const userId = req.user._id;
+  let user = await User.findById(userId);
+  if(!user){
+    return res.status(404).json({ error: "User Not Found" });
+  }
+  if ((newPassword && !currentPassword) || (currentPassword && !newPassword)) {
+    return res.status(400).json({ error: "Please provide both current password and new password" });    
+  }
+  if (newPassword && currentPassword) {
+    const isPasswordCorrect = await user.isPasswordCorrect(currentPassword);
+      if (!isPasswordCorrect) {
+        return res.status(400).json({ error: "Wrong Password" });
+      }
+  }
+
+} catch (error) {
+  console.log("Error in updateUser controller :", error.message);
+    return res.status(500).json({ error: "Internal sever error" });
+  
+}
+}
+
+export { getUserProfile, followUnfollowUser,getSuggestedUser,updateUser };
