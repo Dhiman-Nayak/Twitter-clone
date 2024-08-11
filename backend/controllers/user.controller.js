@@ -1,6 +1,9 @@
 import express from "express";
+import { v2 as cloudinary } from "cloudinary";
+
 import User from "../models/user.model.js";
 import Notification from "../models/notification.model.js";
+import res from "express/lib/response.js";
 
 const getUserProfile = async (req,res) => {
   try {
@@ -85,7 +88,7 @@ const getSuggestedUser=async (req,res)=>{
   }
 }
 
-const updateUser=async ()=>{
+const updateUser=async (req,res)=>{
 try {
   const {fullName,email,bio,link,currentPassword,newPassword} = req.body;
   let {profileImg,coverImg} = req.body;
@@ -104,6 +107,33 @@ try {
         return res.status(400).json({ error: "Wrong Password" });
       }
   }
+  if (profileImg) {
+    if (user.profileImg) {
+      await cloudinary.uploader.destroy(user.profileImg.split('/').pop().split('.')[0]);
+    }
+    const url=await cloudinary.uploader.upload(profileImg);
+    profileImg = url.secure_url;
+  }
+  if (coverImg) {
+    if (user.coverImg) {
+      await cloudinary.uploader.destroy(user.coverImg.split('/').pop().split('.')[0]);
+    }
+    const url=await cloudinary.uploader.upload(coverImg);
+    coverImg = url.secure_url;
+  }
+
+  user.email= email || user.email;
+  user.fullName= fullName || user.fullName;
+  user.bio= bio || user.bio;
+  user.link= link || user.link;
+  user.currentPassword= currentPassword || user.currentPassword;
+  user.password= newPassword || user.password;
+  user.profileImg= profileImg || user.profileImg;
+  user.coverImg= coverImg || user.coverImg;
+
+  user=await user.save();
+  user.password=""
+  return res.status(200).json(user)
 
 } catch (error) {
   console.log("Error in updateUser controller :", error.message);
