@@ -13,6 +13,8 @@ cloudinary.config({
 })
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import postRoutes from "./routes/post.routes.js";
+
 import connectMongoDB from "./db/connectMongoDB.db.js";
 const app=express();
 
@@ -27,6 +29,7 @@ app.use(express.static("public"));
 app.use(cookieParser())
 app.use("/api/auth",authRoutes);
 app.use("/api/users",userRoutes);
+app.use("/api/posts",postRoutes);
 const PORT = process.env.PORT || 3000;
 
 

@@ -3,7 +3,6 @@ import { v2 as cloudinary } from "cloudinary";
 
 import User from "../models/user.model.js";
 import Notification from "../models/notification.model.js";
-import res from "express/lib/response.js";
 
 const getUserProfile = async (req,res) => {
   try {
