@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.route("/create").post(verifyJWT, createPost);
 router.route("/like/:id").post(verifyJWT, likeUnlikePost);
-router.route("/comment").post(verifyJWT, commentOnPost);
-router.route("/").delete(verifyJWT, deletePost);
+router.route("/comment/:id").post(verifyJWT, commentOnPost);
+router.route("/:id").delete(verifyJWT, deletePost);
 
 export default router;
