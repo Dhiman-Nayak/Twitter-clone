@@ -14,6 +14,6 @@ router.route("/:id").delete(verifyJWT, deletePost);
 
 router.route("/following").get(verifyJWT, getFollowing);
 
-router.route("/user/:userName").post(verifyJWT, getUserPosts);
+router.route("/user/:userName").get(verifyJWT, getUserPosts);
 
 export default router;

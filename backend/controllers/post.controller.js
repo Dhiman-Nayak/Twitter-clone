@@ -212,7 +212,7 @@ const getFollowing = async (req, res) => {
                 path: "comment.user",
                 select: "-password -email -coverImg -bio -link -updatedAt"
             });
-        res.status(200).js(feedPost)
+        res.status(200).json(feedPost)
     } catch (error) {
         console.log("Error in getFollowing controller :", error.message);
         return res.status(500).json({ error: "Internal sever error" });
@@ -220,3 +220,5 @@ const getFollowing = async (req, res) => {
     }
 }
 export { createPost, likeUnlikePost, commentOnPost, deletePost, getAllPost, getLikedPost, getFollowing, getUserPosts };
+
+//likeunlike,getfollowingpost,cloudinary
