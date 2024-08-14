@@ -54,7 +54,7 @@ const SignUpPage = () => {
                             <input
                                 type='text'
                                 className='grow '
-                                placeholder='Username'
+                                placeholder='userName'
                                 name='userName'
                                 onChange={handleInputChange}
                                 value={formData.userName}

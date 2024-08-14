@@ -8,7 +8,7 @@ import { MdPassword } from "react-icons/md";
 
 const LoginPage = () => {
 	const [formData, setFormData] = useState({
-		username: "",
+		userName: "",
 		password: "",
 	});
 
@@ -37,10 +37,10 @@ const LoginPage = () => {
 						<input
 							type='text'
 							className='grow'
-							placeholder='username'
-							name='username'
+							placeholder='userName'
+							name='userName'
 							onChange={handleInputChange}
-							value={formData.username}
+							value={formData.userName}
 						/>
 					</label>
 
