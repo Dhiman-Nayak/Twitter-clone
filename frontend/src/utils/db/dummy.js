@@ -4,7 +4,7 @@ export const POSTS = [
 		text: "taj mahal copy😍",
 		img: "taj.jpg",
 		user: {
-			userName: "DMan",
+			userName: "d2",
 			profileImg: "dp2.jpg",
 			fullName: "Dhiman",
 		},
@@ -105,7 +105,7 @@ export const USERS_FOR_RIGHT_PANEL = [
 		_id: "3",
 		fullName: "mm",
 		userName: "aa",
-		profileImg: "dp2.jpg",
+		profileImg: "dp1.jpg",
 	},
 	{
 		_id: "4",
