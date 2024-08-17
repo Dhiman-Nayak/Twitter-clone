@@ -21,7 +21,7 @@ function App() {
         <Route path='/profile/:userName' element={<ProfilePage />} />
 
       </Routes>
-      <RightPanel />
+      {/* <RightPanel /> */}
     </div>
   );
 }

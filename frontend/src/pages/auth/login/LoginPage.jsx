@@ -1,20 +1,43 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-
+import { useNavigate } from 'react-router-dom';
+import { SIGN_IN } from "../../../utils/api/urls";
 import XSvg from "../../../components/svgs/X";
-
 import { MdOutlineMail } from "react-icons/md";
 import { MdPassword } from "react-icons/md";
 
 const LoginPage = () => {
+	const navigate = useNavigate();
 	const [formData, setFormData] = useState({
 		userName: "",
 		password: "",
 	});
 
-	const handleSubmit = (e) => {
+	const handleSubmit =async (e) => {
 		e.preventDefault();
-		console.log(formData);
+		try {
+            console.log(formData);
+    
+            const response = await fetch(SIGN_IN, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+				credentials: 'include'
+            });
+    
+            if (response.ok) {
+                const result = await response.json();
+                
+                console.log('Signin successful:', result);
+                navigate("/");
+            } else {
+                console.error('Signin failed:', response);
+            }
+        } catch (error) {
+            console.error('An error occurred:', error);
+        }
 	};
 
 	const handleInputChange = (e) => {

@@ -5,6 +5,11 @@ import cors from "cors";
 import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
 dotenv.config();
+const app=express();
+app.use(cors({
+    origin: 'http://localhost:4000',
+    credentials:true
+}));
 
 cloudinary.config({
     cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
@@ -16,12 +21,7 @@ import userRoutes from "./routes/user.routes.js";
 import postRoutes from "./routes/post.routes.js";
 
 import connectMongoDB from "./db/connectMongoDB.db.js";
-const app=express();
 
-app.use(cors({
-    origin:process.env.CORS_ORIGIN,
-    credentials:true
-}));
 
 app.use(express.json({limit:"5mb"}));
 app.use(express.urlencoded({extended:true,limit:"16Kb"}));

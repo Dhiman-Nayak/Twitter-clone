@@ -5,16 +5,16 @@ import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 import { QueryClient } from "@tanstack/react-query"
 
-const qurreyClient = new QueryClient();
+// const qurreyClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
 
     <BrowserRouter>
 
-      <QueryClient client={qurreyClient}>
+      {/* <QueryClient client={qurreyClient}> */}
         <App />
-      </QueryClient>
+      {/* </QueryClient> */}
 
     </BrowserRouter>
 
