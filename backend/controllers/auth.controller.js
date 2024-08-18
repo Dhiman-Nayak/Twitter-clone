@@ -45,7 +45,16 @@ const login = async (req, res) => {
   try {
     const token = req.cookies.jwt; // Access the 'jwt' cookie
   if (token) {
-    return res.status(401).json({ error: "Unauthorized" });
+    const decodeToken = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await User.findById(decodeToken?.id).select(
+      "-password "
+    );
+
+    if (!user) {
+      return res.status(401).json({ error: "Invalid access token" });
+    }
+    return res.status(200).json(user);
   }
     const { userName, password } = req.body;
     const user = await User.findOne({ userName });
@@ -59,7 +68,7 @@ const login = async (req, res) => {
       }
       const token = generateTokenandSetCookie(user._id);
       // console.log(token);
-      
+      user.password=""
       res
         .status(200)
         .cookie("jwt", token, {
@@ -67,7 +76,7 @@ const login = async (req, res) => {
           httpOnly: true,
           sameSite: "strict",
         })
-        .json({ message: "User logged in successfully" });
+        .json(user);
     } else {
       return res.res.status(401).json({ error: "Invalid userName" });
     }
