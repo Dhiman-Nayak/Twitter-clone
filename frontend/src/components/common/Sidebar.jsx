@@ -1,18 +1,50 @@
 import XSvg from "../svgs/X";
-
 import { MdHomeFilled } from "react-icons/md";
 import { IoNotifications } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
+import { GoSignOut } from "react-icons/go";
+
+import {  useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { loginStart, loginSuccess, loginFailure, logout } from '../../store/slice/userSlice';
+import {LOG_OUT} from "../../utils/api/urls";
+
 
 const Sidebar = () => {
-	const data = {
-		fullName: "Dhiman",
-		userName: "Dman",
-		profileImg: "/dp2.jpg",
-	};
+	const {  user } = useSelector((state) => state.user);
 
+	const dispatch =useDispatch();
+	const navigate = useNavigate();
+	const handleLogout = async ()=>{
+		try {
+			// dispatch(loginStart());
+    
+            const response = await fetch(LOG_OUT, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+				credentials: 'include'
+            });
+    
+            if (response.ok) {
+                const result = await response.json();
+                
+                console.log('Signin successful:', result);
+                navigate("/login");
+				dispatch(logout())
+            } else {
+				dispatch(loginFailure(response))
+                console.error('Signin failed:', response);
+            }
+        } catch (error) {
+			dispatch(loginFailure(error))
+            console.error('An error occurred:', error);
+        }
+
+	}
 	return (
 		<div className='md:flex-[2_2_0] w-18 max-w-52'>
 			<div className='sticky top-0 left-0 h-screen flex flex-col border-r border-gray-700 w-20 md:w-full'>
@@ -41,28 +73,37 @@ const Sidebar = () => {
 
 					<li className='flex justify-center md:justify-start'>
 						<Link
-							to={`/profile/${data?.userName}`}
+							to={`/profile/${user?.userName}`}
 							className='flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
 						>
 							<FaUser className='w-6 h-6' />
 							<span className='text-lg hidden md:block'>Profile</span>
 						</Link>
 					</li>
+					<li className='flex justify-center md:justify-start'>
+						<div
+							onClick={handleLogout}
+							className='flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
+						>
+							<GoSignOut className='w-6 h-6' />
+							<span className='text-lg hidden md:block'>Sign out</span>
+						</div>
+					</li>
 				</ul>
-				{data && (
+				{user && (
 					<Link
-						to={`/profile/${data.userName}`}
+						to={`/profile/${user.userName}`}
 						className='mt-auto mb-10 flex gap-2 items-start transition-all duration-300 hover:bg-[#181818] py-2 px-4 rounded-full'
 					>
 						<div className='avatar hidden md:inline-flex'>
 							<div className='w-8 rounded-full'>
-								<img src={data?.profileImg || "images.jpg"} />
+								<img src={user?.profileImg || "images.jpg"} />
 							</div>
 						</div>
 						<div className='flex justify-between flex-1'>
 							<div className='hidden md:block'>
-								<p className='text-white font-bold text-sm w-20 truncate'>{data?.fullName}</p>
-								<p className='text-slate-500 text-sm'>@{data?.userName}</p>
+								<p className='text-white font-bold text-sm w-20 truncate'>{user?.fullName}</p>
+								<p className='text-slate-500 text-sm'>@{user?.userName}</p>
 							</div>
 							<BiLogOut className='w-5 h-5 cursor-pointer' />
 						</div>

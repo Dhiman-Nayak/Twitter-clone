@@ -108,4 +108,7 @@ const getMe= async (req,res)=>{
   }
 }
 
-export { signup, login, logout ,getMe};
+const verifyJWTToken = (req,res) =>{
+
+}
+export { signup, login, logout ,getMe,verifyJWTToken};
