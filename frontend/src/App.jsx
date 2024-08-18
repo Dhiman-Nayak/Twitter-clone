@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import './App.css';
 import SignUpPage from './pages/auth/signup/SignUpPage';
@@ -9,10 +9,16 @@ import RightPanel from './components/common/RightPanel';
 import NotificationPage from './pages/notification/NotificationPage';
 import ProfilePage from './pages/profile/ProfilePage';
 
+import useIsMobile from './hooks/UseIsMobile';
+
 function App() {
+
+
+const isMobile = useIsMobile();
+
   return (
     <div className='flex max-w-6xl mx-auto'>
-      <Sidebar />
+      {!isMobile &&<Sidebar />}
       <Routes>
         <Route path='/' element={<HomePage />} />
         <Route path='/signup' element={<SignUpPage />} />
@@ -21,7 +27,7 @@ function App() {
         <Route path='/profile/:userName' element={<ProfilePage />} />
 
       </Routes>
-      <RightPanel />
+      {!isMobile && <RightPanel />}
     </div>
   );
 }

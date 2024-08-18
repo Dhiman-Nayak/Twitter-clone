@@ -25,7 +25,7 @@ export const POSTS = [
 		_id: "2",
 		text: "How you guys doing? 😊",
 		user: {
-			userName: "johndoe",
+			userName: "D1",
 			profileImg: "dp1.jpg",
 			fullName: "John Doe",
 		},
