@@ -3,7 +3,13 @@ import { BsEmojiSmileFill } from "react-icons/bs";
 import { useRef, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 
+import { useSelector, useDispatch } from 'react-redux';
+import { OptStart,OptSuccess, OptFailure } from '../../store/slice/userSlice.js';
+
 const CreatePost = () => {
+	const { loading, error, isAuthenticated, user } = useSelector((state) => state.user);
+
+
 	const [text, setText] = useState("");
 	const [img, setImg] = useState(null);
 
@@ -36,7 +42,7 @@ const CreatePost = () => {
 		<div className='flex p-4 items-start gap-4 border-b border-gray-700'>
 			<div className='avatar'>
 				<div className='w-8 rounded-full'>
-					<img src={data.profileImg || "/avatar-placeholder.png"} />
+					<img src={user.profileImg || "images.jpg"} />
 				</div>
 			</div>
 			<form className='flex flex-col gap-2 w-full' onSubmit={handleSubmit}>

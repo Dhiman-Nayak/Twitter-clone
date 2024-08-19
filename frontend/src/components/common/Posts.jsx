@@ -5,25 +5,30 @@ import Post from "./Post";
 import PostSkeleton from "../skeletons/PostSkeleton";
 import { POSTS } from "../../utils/db/dummy";
 import { useSelector, useDispatch } from 'react-redux';
-import { OptStart,OptSuccess, OptFailure } from '../../store/slice/userSlice';
+import { OptStart, OptSuccess, OptFailure } from '../../store/slice/userSlice';
 
-import { GET_USER_POST } from "../../utils/api/urls";
+import { GET_USER_POST,GET_ALL_POST} from "../../utils/api/urls";
 const Posts = () => {
 	// console.log(POSTS);
-	const dispatch=useDispatch()
+	const dispatch = useDispatch()
 	const [post, setPost] = useState([])
 	const { userName } = useParams()
 
 	const { loading, error, isAuthenticated, user } = useSelector((state) => state.user);
 	useEffect(() => {
-	  
+
 		getUserPost();
 	}, [])
-	
+
 	const getUserPost = async () => {
-		let url = GET_USER_POST + userName;
-		console.log(url);
-		
+		let url;
+		if (userName == undefined) {
+			url = GET_ALL_POST;
+		}else{
+			url = GET_USER_POST + userName;
+		}
+		// console.log(url);
+
 		try {
 			dispatch(OptStart())
 			const response = await fetch(url, {
@@ -36,11 +41,11 @@ const Posts = () => {
 
 			if (response.ok) {
 				let u = await response.json();
-				console.log(u);
+				// console.log(u);
 				setPost(u);
 				dispatch(OptSuccess())
-				console.log(response);
-				
+				// console.log(response);
+
 			} else {
 				dispatch(OptFailure())
 				console.error('Signin failed:', response);

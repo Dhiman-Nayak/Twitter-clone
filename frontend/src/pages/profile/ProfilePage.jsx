@@ -36,7 +36,7 @@ const ProfilePage = () => {
 	const getUserDetails = async () => {
 		let url = GET_PROFILE_USERNAME + userName;
 		try {
-			console.log(url);
+			// console.log(url);
 			
 			dispatch(OptStart())
 			const response = await fetch(url, {
@@ -50,9 +50,9 @@ const ProfilePage = () => {
 			if (response.ok) {
 				u = await response.json();
 				setUser(u);
-				console.log(u);
-				console.log(user);
-				console.log(user?.followers.length);
+				// console.log(u);
+				// console.log(user);
+				// console.log(user?.followers.length);
 				dispatch(OptSuccess())
 			} else {
 				dispatch(OptFailure())

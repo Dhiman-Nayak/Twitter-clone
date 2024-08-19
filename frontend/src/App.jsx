@@ -19,16 +19,18 @@ function App() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();  
+  
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const toggleSidebar = () => {
     setSidebarVisible(!isSidebarVisible);
   };
-
+  
   const closeSidebar = () => {
     setSidebarVisible(false);
   };
   const isMobile = useIsMobile();
   useEffect(() => {
+    // console.log();
     const verifyToken = async () => {
       try {
         dispatch(OptStart());
@@ -45,7 +47,7 @@ function App() {
           const result = await response.json();
 
           // console.log('Signin successful:', result);
-          navigate("/");
+          navigate(`${location.pathname}`);
           dispatch(loginSuccess(result))
         } else {
           dispatch(OptFailure(response))
@@ -75,9 +77,7 @@ function App() {
 
       </Routes>
       {!isMobile  &&<RightPanel />}
-      <Routes>
-
-      </Routes>
+      
     </div>
   );
 }

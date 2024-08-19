@@ -19,3 +19,4 @@ export const UPLOAD_AVATAR = `${URL}/profile/upload-avatar`;
 
 //
 export const GET_USER_POST = `${URL}/api/posts/user/`;
+export const GET_ALL_POST =  `${URL}/api/posts/getPost` ;
