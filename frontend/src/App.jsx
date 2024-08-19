@@ -19,9 +19,14 @@ function App() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();  
-  // const isSignupRoute = location.pathname === '/signup';
-  // const [isLoginRoute, setIsLoginRoute] = useState(location.pathname === '/login')
+  const [isSidebarVisible, setSidebarVisible] = useState(false);
+  const toggleSidebar = () => {
+    setSidebarVisible(!isSidebarVisible);
+  };
 
+  const closeSidebar = () => {
+    setSidebarVisible(false);
+  };
   const isMobile = useIsMobile();
   useEffect(() => {
     const verifyToken = async () => {
@@ -57,12 +62,14 @@ function App() {
 
   return (
     <div className='flex max-w-6xl mx-auto'>
-      {!isMobile && <Sidebar />}
+      {/* <Sidebar /> */}
+      {/* {!isMobile && <Sidebar />} */}
+      {(!isMobile || isSidebarVisible) && <Sidebar />}
       <Routes>
         <Route path='/signup' element={<SignUpPage />} />
         <Route path='/login' element={<LoginPage />} />
         {/* <Route path='/' element={<PrivateRoute element={HomePage} />} /> */}
-        <Route path='/' element={<HomePage/>} />
+        <Route path='/' element={<HomePage toggleSidebar={toggleSidebar} />} />
         <Route path='/notifications' element={<NotificationPage/>} />
         <Route path='/profile/:userName' element={<ProfilePage/>} />
 
