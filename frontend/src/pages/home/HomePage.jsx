@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { loginStart, loginSuccess, loginFailure, logout } from '../../store/slice/userSlice.js';
+import { OptStart, loginSuccess, OptFailure, logout } from '../../store/slice/userSlice.js';
 import Posts from "../../components/common/Posts";
 import CreatePost from "./CreatePost";
 import useIsMobile from "../../hooks/UseIsMobile";

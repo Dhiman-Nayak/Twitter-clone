@@ -1,10 +1,12 @@
 import { useRef, useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useSelector, useDispatch } from 'react-redux';
+import { OptStart,OptSuccess, OptFailure } from '../../store/slice/userSlice.js';
 
 import Posts from "../../components/common/Posts";
 import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton";
 import EditProfileModal from "./EditProfileModal";
-import { GET_PROFILE_USERNAME } from "../../utils/api/urls.js"
+import { GET_PROFILE_USERNAME, GET_USER_POST } from "../../utils/api/urls.js"
 
 import { POSTS } from "../../utils/db/dummy";
 
@@ -14,12 +16,13 @@ import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 
 const ProfilePage = () => {
+	const { loading, error, isAuthenticated } = useSelector((state) => state.user);
+	const dispatch = useDispatch();
 	const { userName } = useParams()
 
 	const [coverImg, setCoverImg] = useState(null);
 	const [profileImg, setProfileImg] = useState(null);
 	const [feedType, setFeedType] = useState("posts");
-	const [Loading, setLoading] = useState(true)
 	const [user, setUser] = useState(null)
 	const coverImgRef = useRef(null);
 	const profileImgRef = useRef(null);
@@ -29,43 +32,38 @@ const ProfilePage = () => {
 	}, []);
 
 	let isMyProfile = true;
-	const url = GET_PROFILE_USERNAME + userName;
 	let u = {};
 	const getUserDetails = async () => {
+		let url = GET_PROFILE_USERNAME + userName;
 		try {
+			console.log(url);
+			
+			dispatch(OptStart())
 			const response = await fetch(url, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				// body: JSON.stringify(formData),
 				credentials: 'include'
 			});
 
 			if (response.ok) {
 				u = await response.json();
 				setUser(u);
-				setLoading(false)
 				console.log(u);
 				console.log(user);
 				console.log(user?.followers.length);
-
-
-				// console.log('Signin successful:', result);
+				dispatch(OptSuccess())
 			} else {
-				setLoading(false)
-				console.error('Signin failed:', response);
+				dispatch(OptFailure())
+				console.error('Getting user profile:', response);
 			}
 		} catch (error) {
+			dispatch(OptFailure(error))
 			console.error('An error occurred:', error);
 		}
 	}
-	// useEffect(() => {
-	//     if (user) {
-	//         console.log('User data after setUser:', user);
-	//         console.log('Number of followers:', user?.followers?.length);
-	//     }
-	// }, [user]); 
+	
 	const handleImgChange = (e, state) => {
 		const file = e.target.files[0];
 		if (file) {
@@ -82,8 +80,8 @@ const ProfilePage = () => {
 		<>
 			<div className='flex-[4_4_0]  border-r border-gray-700 min-h-screen '>
 				{/* HEADER */}
-				{Loading && <ProfileHeaderSkeleton />}
-				{!Loading && !user &&
+				{loading && <ProfileHeaderSkeleton />}
+				{!loading && !user &&
 					<div className='text-center text-lg mt-4'>
 						<div className='flex flex-col gap-2 w-full my-2 p-4'>
 							<div className='flex gap-2 items-center'>
@@ -93,7 +91,7 @@ const ProfilePage = () => {
 											<div className='skeleton h-20 w-20 rounded-full border absolute -bottom-10 left-3'></div>
 										</div>
 										<div className="text-4xl mt-40 font-bold">
-										This account doesn't <br />exist
+											This account doesn't <br />exist
 										</div>
 									</div>
 								</div>
@@ -102,7 +100,7 @@ const ProfilePage = () => {
 					</div>
 				}
 				<div className='flex flex-col'>
-					{!Loading && user && (
+					{!loading && user && (
 						<>
 							<div className='flex gap-10 px-4 py-2 items-center'>
 								<Link to='/'>
@@ -203,7 +201,7 @@ const ProfilePage = () => {
 									)}
 									<div className='flex gap-2 items-center'>
 										<IoCalendarOutline className='w-4 h-4 text-slate-500' />
-										<span className='text-sm text-slate-500'>Joined {user.createdAt.slice(0,4)}</span>
+										<span className='text-sm text-slate-500'>Joined {user.createdAt.slice(0, 4)}</span>
 									</div>
 								</div>
 								<div className='flex gap-2'>
@@ -240,7 +238,7 @@ const ProfilePage = () => {
 						</>
 					)}
 
-					<Posts />
+					<Posts userName={userName}/>
 				</div>
 			</div>
 		</>

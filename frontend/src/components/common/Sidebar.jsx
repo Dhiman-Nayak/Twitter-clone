@@ -8,7 +8,7 @@ import { GoSignOut } from "react-icons/go";
 
 import {  useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { loginStart, loginSuccess, loginFailure, logout } from '../../store/slice/userSlice';
+import { OptStart, loginSuccess, OptFailure, logout } from '../../store/slice/userSlice';
 import {LOG_OUT} from "../../utils/api/urls";
 import useIsMobile from "../../hooks/UseIsMobile";
 
@@ -21,7 +21,7 @@ const Sidebar = () => {
 	const navigate = useNavigate();
 	const handleLogout = async ()=>{
 		try {
-			// dispatch(loginStart());
+			// dispatch(OptStart());
     
             const response = await fetch(LOG_OUT, {
                 method: 'GET',
@@ -38,11 +38,11 @@ const Sidebar = () => {
                 navigate("/login");
 				dispatch(logout())
             } else {
-				dispatch(loginFailure(response))
+				dispatch(OptFailure(response))
                 console.error('Signin failed:', response);
             }
         } catch (error) {
-			dispatch(loginFailure(error))
+			dispatch(OptFailure(error))
             console.error('An error occurred:', error);
         }
 

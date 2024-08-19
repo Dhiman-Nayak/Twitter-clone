@@ -10,7 +10,7 @@ import NotificationPage from './pages/notification/NotificationPage';
 import ProfilePage from './pages/profile/ProfilePage';
 import { useSelector, useDispatch } from 'react-redux';
 import PrivateRoute from './components/PrivateRoute';
-import { loginStart, loginSuccess, loginFailure, logout } from './store/slice/userSlice';
+import { OptStart, loginSuccess, OptFailure, logout } from './store/slice/userSlice';
 import useIsMobile from './hooks/UseIsMobile';
 import {VERIFY_TOKEN} from "./utils/api/urls";
 
@@ -31,7 +31,7 @@ function App() {
   useEffect(() => {
     const verifyToken = async () => {
       try {
-        dispatch(loginStart());
+        dispatch(OptStart());
 
         const response = await fetch(VERIFY_TOKEN, {
           method: 'GET',
@@ -44,15 +44,15 @@ function App() {
         if (response.ok) {
           const result = await response.json();
 
-          console.log('Signin successful:', result);
+          // console.log('Signin successful:', result);
           navigate("/");
           dispatch(loginSuccess(result))
         } else {
-          dispatch(loginFailure(response))
+          dispatch(OptFailure(response))
           console.error('Signin failed:', response);
         }
       } catch (error) {
-        dispatch(loginFailure(error))
+        dispatch(OptFailure(error))
         console.error('An error occurred:', error);
       }
     }

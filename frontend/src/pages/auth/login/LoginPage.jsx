@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { loginStart, loginSuccess, loginFailure } from '../../../store/slice/userSlice.js';
+import { OptStart, loginSuccess, OptFailure } from '../../../store/slice/userSlice.js';
 import { SIGN_IN } from "../../../utils/api/urls";
 import XSvg from "../../../components/svgs/X";
 import { MdOutlineMail } from "react-icons/md";
@@ -21,7 +21,7 @@ const LoginPage = () => {
 	const handleSubmit =async (e) => {
 		e.preventDefault();
 		try {
-			dispatch(loginStart());
+			dispatch(OptStart());
             console.log(formData);
     
             const response = await fetch(SIGN_IN, {
@@ -40,11 +40,11 @@ const LoginPage = () => {
                 navigate("/");
 				dispatch(loginSuccess(result))
             } else {
-				dispatch(loginFailure(response))
+				dispatch(OptFailure(response))
                 console.error('Signin failed:', response);
             }
         } catch (error) {
-			dispatch(loginFailure(error))
+			dispatch(OptFailure(error))
             console.error('An error occurred:', error);
         }
 	};
