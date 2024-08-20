@@ -4,40 +4,85 @@ import User from "../models/user.model.js";
 import Notification from "../models/notification.model.js";
 import Post from "../models/post.model.js";
 
+// const createPost = async (req, res) => {
+//     try {
+
+//         const { text } = req.body;
+//         let { img } = req.body;
+//         console.log(req.body);
+
+//         const userId = req.user._id.toString();
+//         let user = User.findById(userId);
+//         if (!user) {
+//             return res.status(404).json({ message: "User not found" })
+//         }
+//         if (!text && !img) {
+//             return res.status(404).json({ message: "Post must contain some text or data" })
+//         }
+
+//         if (img) {
+//             const urll = await cloudinary.uploader.upload(img);
+//             img = urll.secure_url;
+//         }
+//         console.log(img);
+
+//         const newPost = new Post({
+//             user: userId,
+//             text,
+//             img: img
+//         })
+//         await newPost.save()
+//         return res.status(200).json(newPost)
+//     } catch (error) {
+//         console.log("Error in createPost controller :", error.message);
+//         return res.status(500).json({ error: "Internal sever error" });
+//     }
+// }
 const createPost = async (req, res) => {
     try {
-
         const { text } = req.body;
-        let { img } = req.body;
-        console.log(text);
-
+        const {img}=req.body
         const userId = req.user._id.toString();
-        let user = User.findById(userId);
+        // console.log(req.body,"***",req.file);
+        // const img=undefined;
+        // Find the user in the database
+        const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).json({ message: "User not found" })
+            return res.status(404).json({ message: "User not found" });
         }
+
+        // Check if the post contains at least text or an image
+        // if (!text && !req.file) {
+        //     return res.status(400).json({ message: "Post must contain some text or image" });
+        // }
         if (!text && !img) {
-            return res.status(404).json({ message: "Post must contain some text or data" })
+            return res.status(400).json({ message: "Post must contain some text or image" });
         }
 
+        // If there is an image, upload it to Cloudinary
+        let imageUrl = req.file;
         if (img) {
-            const urll = await cloudinary.uploader.upload(img);
-            img = urll.secure_url;
+            const uploadResult = await cloudinary.uploader.upload(img);
+            imageUrl = uploadResult.secure_url;
         }
-        console.log(img);
 
+        // Create a new post
         const newPost = new Post({
             user: userId,
             text,
-            img: img
-        })
-        await newPost.save()
-        return res.status(200).json(newPost)
+            img: imageUrl,
+        });
+
+        // Save the new post to the database
+        await newPost.save();
+
+        // Return the created post as a response
+        return res.status(200).json(newPost);
     } catch (error) {
-        console.log("Error in createPost controller :", error.message);
-        return res.status(500).json({ error: "Internal sever error" });
+        console.error("Error in createPost controller:", error.message);
+        return res.status(500).json({ error: "Internal server error" });
     }
-}
+};
 
 const likeUnlikePost = async (req, res) => {
     try {

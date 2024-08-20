@@ -1,10 +1,17 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import RightPanelSkeleton from "../skeletons/RightPanelSkeleton";
 import { USERS_FOR_RIGHT_PANEL } from "../../utils/db/dummy";
-
+import {GET_SUGGESTED_PROFILES} from "../../utils/api/urls.js"
 const RightPanel = () => {
 	const isLoading = false;
+	useEffect(() => {
+	  const getProfileSuggestion = async ()=>{
 
+	  }
+	  getProfileSuggestion();
+	}, [])
+	
 	return (
 		<div className=' lg:block my-4 mx-2 '>
 			<div className='bg-[#16181C] p-4 rounded-md sticky top-2'>

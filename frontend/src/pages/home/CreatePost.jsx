@@ -2,13 +2,15 @@ import { CiImageOn } from "react-icons/ci";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import { useRef, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
+import { SnackbarProvider, useSnackbar } from 'notistack';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { OptStart,OptSuccess, OptFailure } from '../../store/slice/userSlice.js';
-
+import {CREATE_POST} from "../../utils/api/urls.js"
 const CreatePost = () => {
 	const { loading, error, isAuthenticated, user } = useSelector((state) => state.user);
-
+	const dispatch = useDispatch()
+	const { enqueueSnackbar } = useSnackbar();
 
 	const [text, setText] = useState("");
 	const [img, setImg] = useState(null);
@@ -18,13 +20,43 @@ const CreatePost = () => {
 	const isPending = false;
 	const isError = false;
 
-	const data = {
-		profileImg: "/avatars/boy1.png",
-	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit =async (e) => {
 		e.preventDefault();
-		alert("Post created successfully");
+		let url = CREATE_POST ;
+		try {
+			// console.log(url);
+			
+			dispatch(OptStart())
+			const response = await fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({text,img}),
+				credentials: 'include'
+			});
+
+			if (response.ok) {
+				let res = await response.json();
+				// setUser(u);
+				console.log(res);
+				// console.log(user);
+				// console.log(user?.followers.length);
+				dispatch(OptSuccess())
+				enqueueSnackbar('Post uploaded successfully', { variant: 'success' });
+				setImg(null);
+			} else {
+				enqueueSnackbar('something went wrong', { variant: 'faliure' });
+				dispatch(OptFailure())
+				console.error('Getting user profile:', response);
+			}
+		} catch (error) {
+			enqueueSnackbar('something went wrong', { variant: 'faliure' });
+			dispatch(OptFailure(error))
+			console.error('An error occurred:', error);
+		}
+		//alert("Post created successfully");
 	};
 
 	const handleImgChange = (e) => {
@@ -42,7 +74,7 @@ const CreatePost = () => {
 		<div className='flex p-4 items-start gap-4 border-b border-gray-700'>
 			<div className='avatar'>
 				<div className='w-8 rounded-full'>
-					<img src={user.profileImg || "images.jpg"} />
+					<img src={user?.profileImg || "images.jpg"} />
 				</div>
 			</div>
 			<form className='flex flex-col gap-2 w-full' onSubmit={handleSubmit}>

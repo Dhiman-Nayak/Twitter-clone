@@ -50,6 +50,7 @@ function App() {
           navigate(`${location.pathname}`);
           dispatch(loginSuccess(result))
         } else {
+          navigate("/login")
           dispatch(OptFailure(response))
           console.error('Signin failed:', response);
         }

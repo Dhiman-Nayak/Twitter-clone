@@ -16,7 +16,7 @@ const HomePage = ({toggleSidebar} ) => {
 	return (
 		<>
 			<div className='flex-[4_4_0] mr-auto border-r border-gray-700 min-h-screen relative'>
-				<div className='sticky top-0 flex w-full bg-transparent bg-black border-b border-gray-700'>
+				<div className='sticky top-0 flex w-full  bg-gray-900 bg-transparent border-b border-gray-700'>
 
 				{isMobile && <IoReorderThreeSharp className="w-7 h-7 rounded-full ml-2 mt-2" onClick={toggleSidebar}/>}
 					<div
