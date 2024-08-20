@@ -1,17 +1,51 @@
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 import { Link } from "react-router-dom";
 import RightPanelSkeleton from "../skeletons/RightPanelSkeleton";
-import { USERS_FOR_RIGHT_PANEL } from "../../utils/db/dummy";
+// import { USERS_FOR_RIGHT_PANEL } from "../../utils/db/dummy";
 import {GET_SUGGESTED_PROFILES} from "../../utils/api/urls.js"
-const RightPanel = () => {
-	const isLoading = false;
-	useEffect(() => {
-	  const getProfileSuggestion = async ()=>{
 
-	  }
+import { useSelector, useDispatch } from 'react-redux';
+import { OptStart,OptSuccess, OptFailure } from '../../store/slice/userSlice.js';
+
+const RightPanel = () => {
+	const dispatch = useDispatch();
+	const isLoading = false;
+	const [profiles, setProfiles] = useState([])
+	useEffect(() => {
+	  
 	  getProfileSuggestion();
 	}, [])
-	
+	const getProfileSuggestion = async ()=>{
+		let url = GET_SUGGESTED_PROFILES;
+		try {
+			// console.log(url);
+			
+			dispatch(OptStart())
+			const response = await fetch(url, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				credentials: 'include'
+			});
+
+			if (response.ok) {
+				let u = await response.json();
+				// setUser(u);
+				console.log(u);
+				// console.log(user);
+				// console.log(user?.followers.length);
+				setProfiles(u)
+				dispatch(OptSuccess())
+			} else {
+				dispatch(OptFailure())
+				console.error('Getting user profile:', response);
+			}
+		} catch (error) {
+			dispatch(OptFailure(error))
+			console.error('An error occurred:', error);
+		}
+	  }
 	return (
 		<div className=' lg:block my-4 mx-2 '>
 			<div className='bg-[#16181C] p-4 rounded-md sticky top-2'>
@@ -27,7 +61,7 @@ const RightPanel = () => {
 						</>
 					)}
 					{!isLoading &&
-						USERS_FOR_RIGHT_PANEL?.map((user) => (
+						profiles?.map((user) => (
 							<Link
 								to={`/profile/${user.userName}`}
 								className='flex items-center justify-between gap-4'

@@ -10,13 +10,13 @@ import store from './store/store.js'
 // const qurreyClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <BrowserRouter>
       <Provider store={store}>
         <SnackbarProvider>
           <App />
         </SnackbarProvider>
       </Provider>
-    </BrowserRouter>
-  </React.StrictMode>,
+    </BrowserRouter>,
+  {/* </React.StrictMode> */}
 )
