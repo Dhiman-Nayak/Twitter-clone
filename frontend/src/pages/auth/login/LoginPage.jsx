@@ -22,7 +22,7 @@ const LoginPage = () => {
 		e.preventDefault();
 		try {
 			dispatch(OptStart());
-            console.log(formData);
+            // console.log(formData);
     
             const response = await fetch(SIGN_IN, {
                 method: 'POST',
@@ -36,7 +36,7 @@ const LoginPage = () => {
             if (response.ok) {
                 const result = await response.json();
                 
-                console.log('Signin successful:', result);
+                // console.log('Signin successful:', result);
                 navigate("/");
 				dispatch(loginSuccess(result))
             } else {

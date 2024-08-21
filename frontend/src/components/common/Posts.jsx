@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 
 import Post from "./Post";
 import PostSkeleton from "../skeletons/PostSkeleton";
-import { POSTS } from "../../utils/db/dummy";
+// import { POSTS } from "../../utils/db/dummy";
 import { useSelector, useDispatch } from 'react-redux';
 import { OptStart, OptSuccess, OptFailure } from '../../store/slice/userSlice';
 
@@ -65,12 +65,13 @@ const Posts = () => {
 					<PostSkeleton />
 				</div>
 			)}
-			{!loading && POSTS?.length === 0 && <p className='text-center my-4'>No posts in this tab. Switch 👻</p>}
-			{!loading && POSTS && (
+			{!loading && post?.length === 0 && <p className='mt-4 text-center my-4'>No posts in this tab. Switch 👻</p>}
+			{!loading && post && (
 				<div>
 					{post.map((post) => (
 						<Post key={post._id} post={post} />
 					))}
+					
 				</div>
 			)}
 		</>

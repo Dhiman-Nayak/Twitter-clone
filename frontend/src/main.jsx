@@ -17,6 +17,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <App />
         </SnackbarProvider>
       </Provider>
-    </BrowserRouter>,
-  {/* </React.StrictMode> */}
+    </BrowserRouter>
+  
 )

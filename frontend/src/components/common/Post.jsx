@@ -1,29 +1,83 @@
+import { useEffect } from "react";
 import { FaRegComment } from "react-icons/fa";
 import { BiRepost } from "react-icons/bi";
 import { FaRegHeart } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
+
 import { FaRegBookmark } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
+import { useSelector, useDispatch } from 'react-redux';
+import { OptStart, OptSuccess, OptFailure } from '../../store/slice/userSlice.js';
+import { LIKE_UNLIKE_POST } from "../../utils/api/urls.js"
 const Post = ({ post }) => {
+	const dispatch = useDispatch();
+	const { user } = useSelector((state) => state.user)
 	const [comment, setComment] = useState("");
-	const postOwner = post.user;
-	const isLiked = false;
-
+	const [isLiked, setIsLiked] = useState(false)
+	const [likesCount, setLikesCount] = useState(post?.likes.length ||0)
+	// console.log(post);
+	const postOwner = post.user
 	const isMyPost = true;
 
 	const formattedDate = "1h";
 
 	const isCommenting = false;
 
-	const handleDeletePost = () => {};
+	useEffect(() => {
+		let u = user._id in post.likes
+		// console.log(u, user._id, post.likes);
+
+		if (post.likes.includes(user._id)) {
+			setIsLiked(true)
+		}
+
+
+	}, [])
+
+	const handleDeletePost = () => { };
 
 	const handlePostComment = (e) => {
 		e.preventDefault();
 	};
 
-	const handleLikePost = () => {};
+	const handleLikePost = async () => {
+		let url = LIKE_UNLIKE_POST + post._id;
+		// console.log(url);
+
+		try {
+
+			dispatch(OptStart())
+			const response = await fetch(url, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				credentials: 'include'
+			});
+
+			if (response.ok) {
+				let u = await response.json();
+				setIsLiked(!isLiked)
+				setLikesCount(u.post.likes.length)
+				// setUser(u);
+				console.log(u);
+				// console.log(user);
+				// console.log(user?.followers.length);
+				console.log(isLiked);
+
+				dispatch(OptSuccess())
+			} else {
+				dispatch(OptFailure("yes"))
+				console.error('Getting user profile:', response);
+			}
+		} catch (error) {
+			dispatch(OptFailure(error))
+			console.error('An error occurred:', error);
+		}
+	};
 
 	return (
 		<>
@@ -126,20 +180,19 @@ const Post = ({ post }) => {
 							</dialog>
 							<div className='flex gap-1 items-center group cursor-pointer'>
 								<BiRepost className='w-6 h-6  text-slate-500 group-hover:text-green-500' />
-								<span className='text-sm text-slate-500 group-hover:text-green-500'>0</span>
+								{/* <span className='text-sm text-slate-500 group-hover:text-green-500'>0</span> */}
 							</div>
 							<div className='flex gap-1 items-center group cursor-pointer' onClick={handleLikePost}>
 								{!isLiked && (
 									<FaRegHeart className='w-4 h-4 cursor-pointer text-slate-500 group-hover:text-pink-500' />
 								)}
-								{isLiked && <FaRegHeart className='w-4 h-4 cursor-pointer text-pink-500 ' />}
+								{isLiked && <FaHeart  className='w-4 h-4 cursor-pointer text-pink-500 ' />}
 
 								<span
-									className={`text-sm text-slate-500 group-hover:text-pink-500 ${
-										isLiked ? "text-pink-500" : ""
-									}`}
+									className={`text-sm text-slate-500 group-hover:text-pink-500 ${isLiked ? "text-pink-500" : ""
+										}`}
 								>
-									{post.likes.length}
+									{likesCount}
 								</span>
 							</div>
 						</div>

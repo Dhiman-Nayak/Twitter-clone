@@ -9,6 +9,7 @@ import { OptStart,OptSuccess, OptFailure } from '../../store/slice/userSlice.js'
 
 const RightPanel = () => {
 	const dispatch = useDispatch();
+	const {user } = useSelector((state)=>state.user)
 	const isLoading = false;
 	const [profiles, setProfiles] = useState([])
 	useEffect(() => {
@@ -16,7 +17,8 @@ const RightPanel = () => {
 	  getProfileSuggestion();
 	}, [])
 	const getProfileSuggestion = async ()=>{
-		let url = GET_SUGGESTED_PROFILES;
+		if(user){
+			let url = GET_SUGGESTED_PROFILES;
 		try {
 			// console.log(url);
 			
@@ -32,7 +34,7 @@ const RightPanel = () => {
 			if (response.ok) {
 				let u = await response.json();
 				// setUser(u);
-				console.log(u);
+				// console.log(u);
 				// console.log(user);
 				// console.log(user?.followers.length);
 				setProfiles(u)
@@ -45,11 +47,12 @@ const RightPanel = () => {
 			dispatch(OptFailure(error))
 			console.error('An error occurred:', error);
 		}
+		}
 	  }
 	return (
 		<div className=' lg:block my-4 mx-2 '>
 			<div className='bg-[#16181C] p-4 rounded-md sticky top-2'>
-				<p className='font-bold pb-2 text-xl'>You might Like</p>
+				{/* <p className='font-bold pb-2 text-xl'>You might Like</p> */}
 				<div className='flex flex-col gap-4'>
 					{/* item */}
 					{isLoading && (
