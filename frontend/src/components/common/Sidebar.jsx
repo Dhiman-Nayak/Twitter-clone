@@ -34,7 +34,7 @@ const Sidebar = () => {
             if (response.ok) {
                 const result = await response.json();
                 
-                console.log('Signin successful:', result);
+                // console.log('Signin successful:', result);
                 navigate("/login");
 				dispatch(logout())
             } else {

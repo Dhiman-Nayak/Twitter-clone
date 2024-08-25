@@ -16,26 +16,26 @@ const Post = ({ post }) => {
 	const dispatch = useDispatch();
 	const { user } = useSelector((state) => state.user)
 	const [comment, setComment] = useState("");
-	const [isLiked, setIsLiked] = useState(false)
-	const [likesCount, setLikesCount] = useState(post?.likes.length ||0)
-	// console.log(post);
+	const [postD, setPostD] = useState(post)
+	let checkUserDidLiked = post.likes.includes(user._id)
+	const [isLiked, setIsLiked] = useState(checkUserDidLiked)
+	const [likesCount, setLikesCount] = useState(post?.likes.length || 0)
 	const postOwner = post.user
-	const isMyPost = true;
-
+	// console.log(postOwner);
+	const isMyPost = postOwner._id === user._id;
+	// console.log(isMyPost);
+	
 	const formattedDate = "1h";
 
 	const isCommenting = false;
 
 	useEffect(() => {
-		let u = user._id in post.likes
-		// console.log(u, user._id, post.likes);
+		setIsLiked(post.likes.includes(user._id))
+		// setLikesCount(post.likes.length)
+	// 	console.log("isLiked updated:", isLiked);
+    // console.log("likesCount updated:", likesCount);
 
-		if (post.likes.includes(user._id)) {
-			setIsLiked(true)
-		}
-
-
-	}, [])
+	}, [postD.likes, user._id, isLiked])
 
 	const handleDeletePost = () => { };
 
@@ -59,16 +59,19 @@ const Post = ({ post }) => {
 			});
 
 			if (response.ok) {
-				let u = await response.json();
-				setIsLiked(!isLiked)
-				setLikesCount(u.post.likes.length)
-				// setUser(u);
-				console.log(u);
-				// console.log(user);
-				// console.log(user?.followers.length);
-				console.log(isLiked);
+				let updatedPost = await response.json();
 
-				dispatch(OptSuccess())
+				setIsLiked( !isLiked);
+				setLikesCount(updatedPost.post.likes.length);
+				
+				setPostD(updatedPost.post)
+				setTimeout(()=>{
+						
+						
+						console.log(isLiked,postD.likes.length);
+					
+				},5000)
+				dispatch(OptSuccess());
 			} else {
 				dispatch(OptFailure("yes"))
 				console.error('Getting user profile:', response);
@@ -95,7 +98,7 @@ const Post = ({ post }) => {
 						<span className='text-gray-700 flex gap-1 text-sm'>
 							<Link to={`/profile/${postOwner.userName}`}>@{postOwner.userName}</Link>
 							<span>·</span>
-							<span>{formattedDate}</span>
+							<span>{postD.createdAt}</span>
 						</span>
 						{isMyPost && (
 							<span className='flex justify-end flex-1'>
@@ -104,10 +107,10 @@ const Post = ({ post }) => {
 						)}
 					</div>
 					<div className='flex flex-col gap-3 overflow-hidden'>
-						<span>{post.text}</span>
-						{post.img && (
+						<span>{postD.text}</span>
+						{postD.img && (
 							<img
-								src={post.img}
+								src={postD.img}
 								className='h-80 object-contain rounded-lg border border-gray-700'
 								alt=''
 							/>
@@ -117,15 +120,15 @@ const Post = ({ post }) => {
 						<div className='flex gap-4 items-center w-2/3 justify-between'>
 							<div
 								className='flex gap-1 items-center cursor-pointer group'
-								onClick={() => document.getElementById("comments_modal" + post._id).showModal()}
+								onClick={() => document.getElementById("comments_modal" + postD._id).showModal()}
 							>
 								<FaRegComment className='w-4 h-4  text-slate-500 group-hover:text-sky-400' />
 								<span className='text-sm text-slate-500 group-hover:text-sky-400'>
-									{post.comments?.length}
+									{postD.comments?.length}
 								</span>
 							</div>
 							{/* We're using Modal Component from DaisyUI */}
-							<dialog id={`comments_modal${post._id}`} className='modal border-none outline-none'>
+							<dialog id={`comments_modal${postD._id}`} className='modal border-none outline-none'>
 								<div className='modal-box rounded border border-gray-600'>
 									<h3 className='font-bold text-lg mb-4'>COMMENTS</h3>
 									<div className='flex flex-col gap-3 max-h-60 overflow-auto'>
@@ -183,14 +186,17 @@ const Post = ({ post }) => {
 								{/* <span className='text-sm text-slate-500 group-hover:text-green-500'>0</span> */}
 							</div>
 							<div className='flex gap-1 items-center group cursor-pointer' onClick={handleLikePost}>
-								{!isLiked && (
+								{/* {!isLiked && (
 									<FaRegHeart className='w-4 h-4 cursor-pointer text-slate-500 group-hover:text-pink-500' />
 								)}
-								{isLiked && <FaHeart  className='w-4 h-4 cursor-pointer text-pink-500 ' />}
-
+								{isLiked && <FaHeart  className='w-4 h-4 cursor-pointer text-pink-500 ' />} */}
+								{!isLiked ? (
+									<FaRegHeart className='w-4 h-4 cursor-pointer text-slate-500 group-hover:text-pink-500' />
+								) : (
+									<FaHeart className='w-4 h-4 cursor-pointer text-pink-500' />
+								)}
 								<span
-									className={`text-sm text-slate-500 group-hover:text-pink-500 ${isLiked ? "text-pink-500" : ""
-										}`}
+									className={`text-sm text-slate-500 group-hover:text-pink-500 `}
 								>
 									{likesCount}
 								</span>
@@ -205,4 +211,6 @@ const Post = ({ post }) => {
 		</>
 	);
 };
+
+
 export default Post;

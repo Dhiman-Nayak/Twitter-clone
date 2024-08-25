@@ -36,9 +36,9 @@ const LoginPage = () => {
             if (response.ok) {
                 const result = await response.json();
                 
-                // console.log('Signin successful:', result);
-                navigate("/");
+                console.log('Signin successful:', result);
 				dispatch(loginSuccess(result))
+                navigate("/");
             } else {
 				dispatch(OptFailure(response))
                 console.error('Signin failed:', response);

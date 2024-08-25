@@ -6,9 +6,9 @@ import { OptStart,OptSuccess, OptFailure } from '../../store/slice/userSlice.js'
 import Posts from "../../components/common/Posts";
 import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton";
 import EditProfileModal from "./EditProfileModal";
-import { GET_PROFILE_USERNAME, GET_USER_POST } from "../../utils/api/urls.js"
+import { GET_PROFILE_USERNAME, GET_USER_POST,FOLLOW_UNFOLLOW } from "../../utils/api/urls.js"
 
-import { POSTS } from "../../utils/db/dummy";
+// import { POSTS } from "../../utils/db/dummy";
 
 import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
@@ -16,22 +16,21 @@ import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 
 const ProfilePage = () => {
-	const { loading, error, isAuthenticated } = useSelector((state) => state.user);
+	const { loading, error, isAuthenticated,user } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 	const { userName } = useParams()
 
 	const [coverImg, setCoverImg] = useState(null);
 	const [profileImg, setProfileImg] = useState(null);
 	const [feedType, setFeedType] = useState("posts");
-	const [user, setUser] = useState(null)
+	const [userOwner, setuserOwner] = useState(null)
 	const coverImgRef = useRef(null);
 	const profileImgRef = useRef(null);
-
+	const [isMyProfile, setIsMyProfile] = useState(true)
 	useEffect(() => {
 		getUserDetails();
 	}, []);
 
-	let isMyProfile = true;
 	let u = {};
 	const getUserDetails = async () => {
 		let url = GET_PROFILE_USERNAME + userName;
@@ -49,18 +48,23 @@ const ProfilePage = () => {
 
 			if (response.ok) {
 				u = await response.json();
-				setUser(u);
+				console.log(u);
+				
+				setuserOwner(u);
+				console.log(user);
+				setIsMyProfile(user._id === u._id);
+				
 				// console.log(u);
 				// console.log(user);
 				// console.log(user?.followers.length);
 				dispatch(OptSuccess())
 			} else {
-				dispatch(OptFailure())
+				dispatch(OptFailure("error in else ProfilePage.jsx"))
 				console.error('Getting user profile:', response);
 			}
 		} catch (error) {
-			dispatch(OptFailure(error))
-			console.error('An error occurred:', error);
+			dispatch(OptFailure("error in catch ProfilePage.jsx"))
+			console.error('An error occurred in ProfilePage:', error);
 		}
 	}
 	
@@ -76,12 +80,41 @@ const ProfilePage = () => {
 		}
 	};
 
+	const handleFollowUnfollow = async ()=>{
+		try {
+			// console.log(url);
+			let url = FOLLOW_UNFOLLOW+userOwner._id;
+			dispatch(OptStart())
+			const response = await fetch(url, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				credentials: 'include'
+			});
+
+			if (response.ok) {
+				u = await response.json();
+				console.log(u);
+				
+				
+				
+				dispatch(OptSuccess())
+			} else {
+				dispatch(OptFailure("error in else ProfilePage.jsx"))
+				console.error('Getting user profile:', response);
+			}
+		} catch (error) {
+			dispatch(OptFailure("error in catch ProfilePage.jsx"))
+			console.error('An error occurred in ProfilePage:', error);
+		}
+	}
 	return (
 		<>
 			<div className='flex-[4_4_0]  border-r border-gray-700 min-h-screen '>
 				{/* HEADER */}
 				{loading && <ProfileHeaderSkeleton />}
-				{!loading && !user &&
+				{!loading && !userOwner &&
 					<div className='text-center text-lg mt-4'>
 						<div className='flex flex-col gap-2 w-full my-2 p-4'>
 							<div className='flex gap-2 items-center'>
@@ -100,21 +133,21 @@ const ProfilePage = () => {
 					</div>
 				}
 				<div className='flex flex-col'>
-					{!loading && user && (
+					{!loading && userOwner && (
 						<>
 							<div className='flex gap-10 px-4 py-2 items-center'>
 								<Link to='/'>
 									<FaArrowLeft className='w-4 h-4' />
 								</Link>
 								<div className='flex flex-col'>
-									<p className='font-bold text-lg'>{user?.fullName}</p>
-									<span className='text-sm text-slate-500'>{POSTS?.length} posts</span>
+									<p className='font-bold text-lg'>{userOwner?.fullName}</p>
+									{/* <span className='text-sm text-slate-500'>{POSTS?.length} posts</span> */}
 								</div>
 							</div>
 							{/* COVER IMG */}
 							<div className='relative group/cover'>
 								<img
-									src={coverImg || user?.coverImg || "/cover.png"}
+									src={coverImg || userOwner?.coverImg || "/cover.png"}
 									className='h-52 w-full object-cover'
 									alt='cover image'
 								/>
@@ -144,7 +177,7 @@ const ProfilePage = () => {
 								{/* USER AVATAR */}
 								<div className='avatar absolute -bottom-16 left-4'>
 									<div className='w-32 rounded-full relative group/avatar'>
-										<img src={profileImg || user?.profileImg || "/avatar-placeholder.png"} />
+										<img src={profileImg || userOwner?.profileImg || "/avatar-placeholder.png"} />
 										<div className='absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer'>
 											{isMyProfile && (
 												<MdEdit
@@ -161,7 +194,7 @@ const ProfilePage = () => {
 								{!isMyProfile && (
 									<button
 										className='btn btn-outline rounded-full btn-sm'
-										onClick={() => alert("Followed successfully")}
+										onClick={handleFollowUnfollow}
 									>
 										Follow
 									</button>
@@ -178,13 +211,13 @@ const ProfilePage = () => {
 
 							<div className='flex flex-col gap-4 mt-14 px-4'>
 								<div className='flex flex-col'>
-									<span className='font-bold text-lg'>{user.fullName}</span>
-									<span className='text-sm text-slate-500'>@{user?.userName}</span>
-									<span className='text-sm my-1'>{user?.bio}</span>
+									<span className='font-bold text-lg'>{userOwner.fullName}</span>
+									<span className='text-sm text-slate-500'>@{userOwner?.userName}</span>
+									<span className='text-sm my-1'>{userOwner?.bio}</span>
 								</div>
 
 								<div className='flex gap-2 flex-wrap'>
-									{user?.link && (
+									{userOwner?.link && (
 										<div className='flex gap-1 items-center '>
 											<>
 												<FaLink className='w-3 h-3 text-slate-500' />
@@ -201,16 +234,16 @@ const ProfilePage = () => {
 									)}
 									<div className='flex gap-2 items-center'>
 										<IoCalendarOutline className='w-4 h-4 text-slate-500' />
-										<span className='text-sm text-slate-500'>Joined {user.createdAt.slice(0, 4)}</span>
+										<span className='text-sm text-slate-500'>Joined {userOwner.createdAt.slice(0, 4)}</span>
 									</div>
 								</div>
 								<div className='flex gap-2'>
 									<div className='flex gap-1 items-center'>
-										<span className='font-bold text-xs'>{user?.following.length}</span>
+										<span className='font-bold text-xs'>{userOwner?.following.length}</span>
 										<span className='text-slate-500 text-xs'>Following</span>
 									</div>
 									<div className='flex gap-1 items-center'>
-										<span className='font-bold text-xs'>{user?.followers.length || 0}</span>
+										<span className='font-bold text-xs'>{userOwner?.followers.length || 0}</span>
 										<span className='text-slate-500 text-xs'>Followers</span>
 									</div>
 								</div>

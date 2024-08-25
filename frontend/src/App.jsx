@@ -10,7 +10,7 @@ import NotificationPage from './pages/notification/NotificationPage';
 import ProfilePage from './pages/profile/ProfilePage';
 import { useSelector, useDispatch } from 'react-redux';
 import PrivateRoute from './components/PrivateRoute';
-import { OptStart, loginSuccess, OptFailure, logout } from './store/slice/userSlice';
+import { OptStart, loginSuccess, OptFailure,OptSuccess, logout } from './store/slice/userSlice';
 import useIsMobile from './hooks/UseIsMobile';
 import { VERIFY_TOKEN } from "./utils/api/urls";
 
@@ -32,11 +32,9 @@ function App() {
   useEffect(() => {
     // console.log();
     const verifyToken = async () => {
-      if (location.pathname == "/signup") {
-        navigate("/signup")
-      } else if (location.pathname == "/login") {
-        navigate("/login")
-      } else {
+      if (location.pathname == "/signup" ||location.pathname == "/login") {
+        navigate(`${location.pathname}`)
+      }else {
         try {
           dispatch(OptStart());
 
@@ -51,18 +49,24 @@ function App() {
           if (response.ok) {
             const result = await response.json();
 
-            // console.log('Signin successful:', result);
-            navigate(`${location.pathname}`);
             dispatch(loginSuccess(result))
+            console.log('Signin successful:', result);
+            dispatch(OptSuccess())
+            if (!loading) {
+              
+              navigate(`${location.pathname}`);
+            }
+            console.log("done");
+            
           } else {
             navigate("/login")
-            dispatch(OptFailure(response))
+            dispatch(OptFailure("error in else App.jsx"))
             console.error('login failed:', response);
           }
         } catch (error) {
-          dispatch(OptFailure(error))
+          dispatch(OptFailure("error in catch App.jsx"))
           console.error('An error occurred:', error);
-        }
+        } 
       }
     }
     verifyToken();
@@ -83,7 +87,7 @@ function App() {
         <Route path='/profile/:userName' element={<ProfilePage />} />
 
       </Routes>
-      {!isMobile && <RightPanel />}
+      {/* {!isMobile && <RightPanel />} */}
 
     </div>
   );

@@ -8,7 +8,7 @@ const router = express.Router();
 router.route("/getPost").get(verifyJWT, getAllPost);
 router.route("/liked/:id").get(verifyJWT, getLikedPost);
 router.route("/create").post(verifyJWT,upload.single("img"), createPost);
-router.route("/like/:id").post(verifyJWT, likeUnlikePost);
+router.route("/like/:id").get(verifyJWT, likeUnlikePost);
 router.route("/comment/:id").post(verifyJWT, commentOnPost);
 router.route("/:id").delete(verifyJWT, deletePost);
 

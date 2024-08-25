@@ -4,40 +4,6 @@ import User from "../models/user.model.js";
 import Notification from "../models/notification.model.js";
 import Post from "../models/post.model.js";
 
-// const createPost = async (req, res) => {
-//     try {
-
-//         const { text } = req.body;
-//         let { img } = req.body;
-//         console.log(req.body);
-
-//         const userId = req.user._id.toString();
-//         let user = User.findById(userId);
-//         if (!user) {
-//             return res.status(404).json({ message: "User not found" })
-//         }
-//         if (!text && !img) {
-//             return res.status(404).json({ message: "Post must contain some text or data" })
-//         }
-
-//         if (img) {
-//             const urll = await cloudinary.uploader.upload(img);
-//             img = urll.secure_url;
-//         }
-//         console.log(img);
-
-//         const newPost = new Post({
-//             user: userId,
-//             text,
-//             img: img
-//         })
-//         await newPost.save()
-//         return res.status(200).json(newPost)
-//     } catch (error) {
-//         console.log("Error in createPost controller :", error.message);
-//         return res.status(500).json({ error: "Internal sever error" });
-//     }
-// }
 const createPost = async (req, res) => {
     try {
         const { text } = req.body;
@@ -89,19 +55,19 @@ const likeUnlikePost = async (req, res) => {
         const postId = req.params.id;
         const userId = req.user._id;
         const post = await Post.findById(postId);
-
+    
+        
         if (!post) {
             return res.status(404).json({ error: "post not found" })
         }
 
-        const isuserLiked = post.likes.includes(postId.toString());
-        console.log(userId, isuserLiked);
+        const isuserLiked = post.likes.includes(userId.toString());
 
         if (isuserLiked) {
             //true -> unlike the post
             await Post.updateOne({ _id: postId }, { $pull: { likes: userId } });
             await User.updateOne({ _id: userId }, { $pull: { likedPosts: postId } })
-            return res.status(200).json({ error: "post unliked successully" })
+            return res.status(200).json({ message: "post unliked successully" ,post})
         } else {
             post.likes.push(userId);
             await post.save();
@@ -113,7 +79,7 @@ const likeUnlikePost = async (req, res) => {
                 type: "like"
             })
             await notification.save();
-            return res.status(200).json({ error: "post liked successully" })
+            return res.status(200).json({ message: "post liked successully",post })
         }
     } catch (error) {
         console.log("Error in likeUnlikePost controller :", error.message);
