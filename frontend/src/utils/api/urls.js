@@ -13,9 +13,9 @@ export const GET_CURRENT_PROFILE = `${URL}/api/auth/me`;
 export const GET_SUGGESTED_PROFILES = `${URL}/api/users/suggested`;
 export const GET_PROFILE_USERNAME = `${URL}/api/users/profile/`;
 export const FOLLOW_UNFOLLOW = `${URL}/api/users/follow/`
+export const UPDATE_PROFILE = `${URL}/api/users/update`;
 
 //EDIT PROFILE
-export const UPDATE_PROFILE = `${URL}api/users/update`;
 export const UPLOAD_AVATAR = `${URL}/profile/upload-avatar`;
 
 //

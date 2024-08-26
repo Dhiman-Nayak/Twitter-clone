@@ -23,6 +23,8 @@ const CreatePost = () => {
 
 	const handleSubmit =async (e) => {
 		e.preventDefault();
+		// console.log(img);
+		
 		let url = CREATE_POST ;
 		try {
 			// console.log(url);

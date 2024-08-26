@@ -91,7 +91,8 @@ const updateUser=async (req,res)=>{
 try {
   const {fullName,email,bio,link,currentPassword,newPassword} = req.body;
   let {profileImg,coverImg} = req.body;
-
+  // console.log(req.body);
+  
   const userId = req.user._id;
   let user = await User.findById(userId);
   if(!user){
@@ -106,21 +107,24 @@ try {
         return res.status(400).json({ error: "Wrong Password" });
       }
   }
-  if (profileImg) {
+  if (profileImg && profileImg !== user.profileImg) {  // If new image is different from the old one
     if (user.profileImg) {
       await cloudinary.uploader.destroy(user.profileImg.split('/').pop().split('.')[0]);
     }
-    const url=await cloudinary.uploader.upload(profileImg);
+    const url = await cloudinary.uploader.upload(profileImg);
     profileImg = url.secure_url;
+  } else {
+    profileImg = user.profileImg; // Keep the existing image if it's the same
   }
-  if (coverImg) {
+  if (coverImg && coverImg !== user.coverImg) {  // If new image is different from the old one
     if (user.coverImg) {
       await cloudinary.uploader.destroy(user.coverImg.split('/').pop().split('.')[0]);
     }
-    const url=await cloudinary.uploader.upload(coverImg);
+    const url = await cloudinary.uploader.upload(coverImg);
     coverImg = url.secure_url;
+  } else {
+    coverImg = user.coverImg; // Keep the existing image if it's the same
   }
-
   user.email= email || user.email;
   user.fullName= fullName || user.fullName;
   user.bio= bio || user.bio;
@@ -131,7 +135,7 @@ try {
   user.coverImg= coverImg || user.coverImg;
 
   user=await user.save();
-  user.password=""
+  user.password=undefined
   return res.status(200).json(user)
 
 } catch (error) {

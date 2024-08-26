@@ -1,12 +1,12 @@
 import { useRef, useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
-import { OptStart,OptSuccess, OptFailure } from '../../store/slice/userSlice.js';
+import { OptStart, OptSuccess, OptFailure } from '../../store/slice/userSlice.js';
 
 import Posts from "../../components/common/Posts";
 import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton";
 import EditProfileModal from "./EditProfileModal";
-import { GET_PROFILE_USERNAME, GET_USER_POST,FOLLOW_UNFOLLOW } from "../../utils/api/urls.js"
+import { GET_PROFILE_USERNAME, GET_USER_POST, FOLLOW_UNFOLLOW } from "../../utils/api/urls.js"
 
 // import { POSTS } from "../../utils/db/dummy";
 
@@ -16,7 +16,7 @@ import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 
 const ProfilePage = () => {
-	const { loading, error, isAuthenticated,user } = useSelector((state) => state.user);
+	const { loading, error, isAuthenticated, user } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 	const { userName } = useParams()
 
@@ -27,6 +27,7 @@ const ProfilePage = () => {
 	const coverImgRef = useRef(null);
 	const profileImgRef = useRef(null);
 	const [isMyProfile, setIsMyProfile] = useState(true)
+	const [isFollowing, setIsFollowing] = useState(false)
 	useEffect(() => {
 		getUserDetails();
 	}, []);
@@ -36,7 +37,7 @@ const ProfilePage = () => {
 		let url = GET_PROFILE_USERNAME + userName;
 		try {
 			// console.log(url);
-			
+
 			dispatch(OptStart())
 			const response = await fetch(url, {
 				method: 'GET',
@@ -48,12 +49,12 @@ const ProfilePage = () => {
 
 			if (response.ok) {
 				u = await response.json();
-				console.log(u);
-				
+				// console.log(u);
+
 				setuserOwner(u);
-				console.log(user);
+				// console.log(user);
 				setIsMyProfile(user._id === u._id);
-				
+				setIsFollowing(u.followers.includes(user._id))
 				// console.log(u);
 				// console.log(user);
 				// console.log(user?.followers.length);
@@ -67,7 +68,7 @@ const ProfilePage = () => {
 			console.error('An error occurred in ProfilePage:', error);
 		}
 	}
-	
+
 	const handleImgChange = (e, state) => {
 		const file = e.target.files[0];
 		if (file) {
@@ -80,10 +81,10 @@ const ProfilePage = () => {
 		}
 	};
 
-	const handleFollowUnfollow = async ()=>{
+	const handleFollowUnfollow = async () => {
 		try {
 			// console.log(url);
-			let url = FOLLOW_UNFOLLOW+userOwner._id;
+			let url = FOLLOW_UNFOLLOW + userOwner._id;
 			dispatch(OptStart())
 			const response = await fetch(url, {
 				method: 'GET',
@@ -96,9 +97,9 @@ const ProfilePage = () => {
 			if (response.ok) {
 				u = await response.json();
 				console.log(u);
-				
-				
-				
+
+
+
 				dispatch(OptSuccess())
 			} else {
 				dispatch(OptFailure("error in else ProfilePage.jsx"))
@@ -147,7 +148,7 @@ const ProfilePage = () => {
 							{/* COVER IMG */}
 							<div className='relative group/cover'>
 								<img
-									src={coverImg || userOwner?.coverImg || "/cover.png"}
+									src={userOwner?.coverImg || "banner(1).jpg"}
 									className='h-52 w-full object-cover'
 									alt='cover image'
 								/>
@@ -196,13 +197,13 @@ const ProfilePage = () => {
 										className='btn btn-outline rounded-full btn-sm'
 										onClick={handleFollowUnfollow}
 									>
-										Follow
+										{isFollowing ? <span>Follow</span> : <span>UnFollow</span>}
 									</button>
 								)}
 								{(coverImg || profileImg) && (
 									<button
 										className='btn btn-primary rounded-full btn-sm text-white px-4 ml-2'
-										onClick={() => alert("Profile updated successfully")}
+										onClick={handleFollowUnfollow}
 									>
 										Update
 									</button>
@@ -227,7 +228,7 @@ const ProfilePage = () => {
 													rel='noreferrer'
 													className='text-sm text-blue-500 hover:underline'
 												>
-													
+
 												</a>
 											</>
 										</div>
@@ -271,7 +272,7 @@ const ProfilePage = () => {
 						</>
 					)}
 
-					<Posts userName={userName}/>
+					<Posts userName={userName} />
 				</div>
 			</div>
 		</>
