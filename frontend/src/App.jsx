@@ -10,7 +10,7 @@ import NotificationPage from './pages/notification/NotificationPage';
 import ProfilePage from './pages/profile/ProfilePage';
 import { useSelector, useDispatch } from 'react-redux';
 import PrivateRoute from './components/PrivateRoute';
-import { OptStart, loginSuccess, OptFailure,OptSuccess, logout } from './store/slice/userSlice';
+import { OptStart, loginSuccess, OptFailure, OptSuccess, logout } from './store/slice/userSlice';
 import useIsMobile from './hooks/UseIsMobile';
 import { VERIFY_TOKEN } from "./utils/api/urls";
 
@@ -29,50 +29,97 @@ function App() {
     setSidebarVisible(false);
   };
   const isMobile = useIsMobile();
+  // useEffect(() => {
+  //   // console.log();
+  //   const verifyToken = async () => {
+  //     if (location.pathname == "/signup" ||location.pathname == "/login") {
+  //       navigate(`${location.pathname}`)
+  //     }else {
+  //       try {
+  //         dispatch(OptStart());
+
+  //         const response = await fetch(VERIFY_TOKEN, {
+  //           method: 'GET',
+  //           headers: {
+  //             'Content-Type': 'application/json',
+  //           },
+  //           credentials: 'include'
+  //         });
+
+  //         if (response.ok) {
+  //           const result = await response.json();
+
+  //           dispatch(loginSuccess(result))
+  //           console.log('Signin successful:', result);
+  //           dispatch(OptSuccess())
+  //           if (!loading) {
+
+  //             navigate(`${location.pathname}`);
+  //           }
+  //           console.log("done");
+
+  //         } else {
+  //           navigate("/login")
+  //           dispatch(OptFailure("error in else App.jsx"))
+  //           console.error('login failed:', response);
+  //         }
+  //       } catch (error) {
+  //         dispatch(OptFailure("error in catch App.jsx"))
+  //         console.error('An error occurred:', error);
+  //       } 
+  //     }
+  //   }
+  //   verifyToken();
+
+  // }, [])
   useEffect(() => {
-    // console.log();
     const verifyToken = async () => {
-      if (location.pathname == "/signup" ||location.pathname == "/login") {
-        navigate(`${location.pathname}`)
-      }else {
+      if (location.pathname === "/signup" || location.pathname === "/login") {
+        navigate(`${location.pathname}`);
+      } else {
         try {
           dispatch(OptStart());
 
           const response = await fetch(VERIFY_TOKEN, {
-            method: 'GET',
+            method: "GET",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
-            credentials: 'include'
+            credentials: "include",
           });
 
           if (response.ok) {
             const result = await response.json();
 
-            dispatch(loginSuccess(result))
-            console.log('Signin successful:', result);
-            dispatch(OptSuccess())
-            if (!loading) {
-              
-              navigate(`${location.pathname}`);
-            }
-            console.log("done");
+            dispatch(loginSuccess(result));
+            // console.log("Signin successful:", result);
+            dispatch(OptSuccess());
             
           } else {
-            navigate("/login")
-            dispatch(OptFailure("error in else App.jsx"))
-            console.error('login failed:', response);
+            navigate("/login");
+            dispatch(OptFailure("error in else App.jsx"));
+            console.error("Login failed:", response);
           }
         } catch (error) {
-          dispatch(OptFailure("error in catch App.jsx"))
-          console.error('An error occurred:', error);
-        } 
+          navigate("/login");
+          dispatch(OptFailure("error in catch App.jsx"));
+          console.error("An error occurred:", error);
+        }
       }
-    }
+    };
+
     verifyToken();
+  }, [dispatch, location.pathname, navigate]);
 
-  }, [])
-
+  useEffect(() => {
+    // console.log("2-");
+    
+    if (!loading && isAuthenticated && user) {
+      // console.log(user);
+      
+      // navigate(location.pathname); // Navigate only after state update
+    }
+  }, [loading, isAuthenticated, user, navigate, location.pathname]);
   return (
     <div className='flex max-w-6xl mx-auto'>
       {/* <Sidebar /> */}
@@ -81,7 +128,8 @@ function App() {
       <Routes>
         <Route path='/signup' element={<SignUpPage />} />
         <Route path='/login' element={<LoginPage />} />
-        {/* <Route path='/' element={<PrivateRoute element={HomePage} />} /> */}
+        <Route path='/login' element={<LoginPage />} />
+        <Route path='/verifyTokenUser' element={<LoginPage />} />
         <Route path='/' element={<HomePage toggleSidebar={toggleSidebar} />} />
         <Route path='/notifications' element={<NotificationPage />} />
         <Route path='/profile/:userName' element={<ProfilePage />} />

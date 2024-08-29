@@ -230,6 +230,14 @@ const getFollowing = async (req, res) => {
 
     }
 }
-export { createPost, likeUnlikePost, commentOnPost, deletePost, getAllPost, getLikedPost, getFollowing, getUserPosts };
+
+const getNotification = async (req,res)=>{
+    try {
+        
+    } catch (error) {
+        
+    }
+}
+export { createPost, likeUnlikePost, commentOnPost, deletePost, getAllPost, getLikedPost, getFollowing, getUserPosts,getNotification };
 
 //likeunlike,getfollowingpost,cloudinary

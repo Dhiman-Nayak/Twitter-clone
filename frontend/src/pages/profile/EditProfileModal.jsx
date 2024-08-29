@@ -6,7 +6,7 @@ import { MdEdit } from "react-icons/md";
 
 const EditProfileModal = () => {
 	const { loading, error, isAuthenticated, user } = useSelector((state) => state.user);
-	const dispatch = useDispatch();
+	const dispatch = useDispatch();	
 	const [coverImg, setCoverImg] = useState( user.coverImg || "");
 	const [profileImg, setProfileImg] = useState(user.profileImg || "");
 	const [formData, setFormData] = useState({
