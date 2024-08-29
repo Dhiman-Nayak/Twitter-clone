@@ -7,8 +7,8 @@ import PostSkeleton from "../skeletons/PostSkeleton";
 import { useSelector, useDispatch } from 'react-redux';
 import { OptStart, OptSuccess, OptFailure } from '../../store/slice/userSlice';
 
-import { GET_USER_POST,GET_ALL_POST} from "../../utils/api/urls";
-const Posts = () => {
+import { GET_USER_POST,GET_ALL_POST,FOLLOWING_POST} from "../../utils/api/urls";
+const Posts = ({feedType}) => {
 	// console.log(POSTS);
 	const dispatch = useDispatch()
 	const [post, setPost] = useState([])
@@ -18,16 +18,20 @@ const Posts = () => {
 	useEffect(() => {
 
 		getUserPost();
-	}, [])
+	}, [feedType])
 
 	const getUserPost = async () => {
 		let url;
 		if (userName == undefined) {
-			url = GET_ALL_POST;
+			if (feedType ==="following") {
+				url = FOLLOWING_POST;
+			}else{
+				url = GET_ALL_POST;
+			}
 		}else{
 			url = GET_USER_POST + userName;
 		}
-		// console.log(url);
+		console.log(url);
 
 		try {
 			dispatch(OptStart())

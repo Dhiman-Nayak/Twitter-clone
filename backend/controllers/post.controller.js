@@ -208,28 +208,42 @@ const getUserPosts = async (req, res) => {
 
 const getFollowing = async (req, res) => {
     try {
-        const userId = req.user._id;
-        let user = User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ message: "User not found" })
-        }
-        const following = user.following;
-        const feedPost = await Post.find({ user: { $in: following } })
-            .sort({ createdAt: -1 })
-            .populate({
-                path: "user",
-                select: "-password -email -coverImg -bio -link -updatedAt"
-            }).populate({
-                path: "comment.user",
-                select: "-password -email -coverImg -bio -link -updatedAt"
-            });
-        res.status(200).json(feedPost)
+      const userId = req.user._id;
+      
+      // Correctly using await to wait for the promise to resolve
+      let user = await User.findById(userId);  // Missing await keyword
+  
+      // Checking if the user exists
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      const following = user.following;
+  
+      // If the user is not following anyone, return an empty array
+      if (!following || following.length === 0) {
+        return res.status(200).json([]);
+      }
+  
+      const feedPost = await Post.find({ user: { $in: following } })
+        .sort({ createdAt: -1 })
+        .populate({
+          path: "user",
+          select: "-password -email -coverImg -bio -link -updatedAt"
+        })
+        .populate({
+          path: "comment.user",
+          select: "-password -email -coverImg -bio -link -updatedAt"
+        })
+        .lean();  // Optional: Converts Mongoose documents to plain JS objects for better performance
+  
+      res.status(200).json(feedPost);
     } catch (error) {
-        console.log("Error in getFollowing controller :", error.message);
-        return res.status(500).json({ error: "Internal sever error" });
-
+      console.log("Error in getFollowing controller:", error.message);
+      return res.status(500).json({ error: "Internal server error" });  // Typo fixed in error message
     }
-}
+  };
+  
 
 const getNotification = async (req,res)=>{
     try {
@@ -240,4 +254,4 @@ const getNotification = async (req,res)=>{
 }
 export { createPost, likeUnlikePost, commentOnPost, deletePost, getAllPost, getLikedPost, getFollowing, getUserPosts,getNotification };
 
-//likeunlike,getfollowingpost,cloudinary
+//,getfollowingpost,cloudinary

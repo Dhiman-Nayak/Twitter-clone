@@ -45,7 +45,8 @@ const HomePage = ({toggleSidebar} ) => {
 				<CreatePost />
 
 				{/* POSTS */}
-				<Posts />
+				{/* {feedType=="forYou"?<Posts feedType={feedType}/>:<Posts feedType={feedType}/>} */}
+				<Posts feedType={feedType}/>
 			</div>
 		</>
 	);
