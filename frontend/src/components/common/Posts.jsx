@@ -7,8 +7,8 @@ import PostSkeleton from "../skeletons/PostSkeleton";
 import { useSelector, useDispatch } from 'react-redux';
 import { OptStart, OptSuccess, OptFailure } from '../../store/slice/userSlice';
 
-import { GET_USER_POST,GET_ALL_POST,FOLLOWING_POST} from "../../utils/api/urls";
-const Posts = ({feedType}) => {
+import { GET_USER_POST,GET_ALL_POST,FOLLOWING_POST,LIKED_POST} from "../../utils/api/urls";
+const Posts = ({feedType,id}) => {
 	// console.log(POSTS);
 	const dispatch = useDispatch()
 	const [post, setPost] = useState([])
@@ -29,9 +29,13 @@ const Posts = ({feedType}) => {
 				url = GET_ALL_POST;
 			}
 		}else{
-			url = GET_USER_POST + userName;
+			if (feedType=="likes") {
+				url=LIKED_POST+userName
+			}else{
+				url = GET_USER_POST + userName;
+			}
 		}
-		console.log(url);
+		// console.log(url);
 
 		try {
 			dispatch(OptStart())

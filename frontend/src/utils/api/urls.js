@@ -22,3 +22,5 @@ export const CREATE_POST =  `${URL}/api/posts/create` ;
 export const COMMENT_ON_POST =  `${URL}/api/posts/comment/` ;
 export const LIKE_UNLIKE_POST =  `${URL}/api/posts/like/` ;
 export const FOLLOWING_POST =  `${URL}/api/posts/following` ;
+export const LIKED_POST =  `${URL}/api/posts/liked/` ;//used id
+export const DELETE_POST =  `${URL}/api/posts/` ;//POST ID

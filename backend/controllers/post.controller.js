@@ -161,8 +161,11 @@ const getAllPost = async (req, res) => {
 
 const getLikedPost = async (req, res) => {
     try {
-        const userId = req.user._id.toString();
-        let user = User.findById(userId);
+        // const userId = req.user._id.toString();
+        const userName = req.params.id;
+        let user =await User.findOne({userName});
+        // console.log(user);
+        
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }

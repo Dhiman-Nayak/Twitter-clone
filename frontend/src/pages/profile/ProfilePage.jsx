@@ -79,6 +79,7 @@ const ProfilePage = () => {
 				setIsFollowing(u.followers.includes(user._id))
 
 				dispatch(OptSuccess())
+				
 			} else {
 				dispatch(OptFailure("error in else ProfilePage.jsx"))
 				console.error('Getting user profile:', response);
@@ -130,6 +131,8 @@ const ProfilePage = () => {
 			console.error('An error occurred in ProfilePage:', error);
 		}
 	}
+	// console.log(userOwner);
+
 	return (
 		<>
 			{!shouldRender ? <ProfileHeaderSkeleton /> :
@@ -293,7 +296,7 @@ const ProfilePage = () => {
 							</>
 						)}
 
-						<Posts userName={userName} />
+						<Posts userName={userName} feedType={feedType} />
 					</div>
 				</div>
 			}
