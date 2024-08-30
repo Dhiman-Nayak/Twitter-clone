@@ -1,10 +1,10 @@
 {
   "name": "twitter",
   "version": "1.0.0",
-  "main": "backend/server.js",
+  "main": "server/server.js",
   "scripts": {
-    "dev": "nodemon backend/server.js",
-    "start": "node backend/server.js"
+    "dev": "nodemon server/server.js",
+    "start": "node server/server.js"
   },
   "keywords": [],
   "author": "",

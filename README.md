@@ -15,8 +15,8 @@ This project is a clone of Twitter built using the MERN stack (MongoDB, Express,
 
 ## Tech Stack
 
-- **Frontend**: React.js with Tailwind CSS for styling
-- **Backend**: Node.js with Express.js
+- **client**: React.js with Tailwind CSS for styling
+- **server**: Node.js with Express.js
 - **Database**: MongoDB for data storage
 - **Authentication**: JWT (JSON Web Tokens) for secure authentication
 - **State Management**: React Redux for managing global state
@@ -33,5 +33,5 @@ This project is a clone of Twitter built using the MERN stack (MongoDB, Express,
 git clone https://github.com/yourusername/twitter-clone.git
 cd twitter-clone
 npm install
-cd ./frontend
+cd ./client
 npm install
