@@ -1,4 +1,4 @@
-import { useEffect ,useState} from "react";
+import { useEffect, useState } from "react";
 import { FaRegComment } from "react-icons/fa";
 import { BiRepost } from "react-icons/bi";
 import { FaRegHeart } from "react-icons/fa";
@@ -7,36 +7,53 @@ import { GiTireIronCross } from "react-icons/gi";
 import { FaRegBookmark } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
 
+import PostSkeleton from "../skeletons/PostSkeleton";
+
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { OptStart, OptSuccess, OptFailure } from '../../store/slice/userSlice.js';
-import { LIKE_UNLIKE_POST ,COMMENT_ON_POST,DELETE_POST} from "../../utils/api/urls.js"
+import { LIKE_UNLIKE_POST, COMMENT_ON_POST, DELETE_POST, GET_POST_BY_ID } from "../../utils/api/urls.js"
 
 
-const Post = ({ post,handleDataFromChild }) => {
-	// console.log(post);
-	
+const Post = ({ post, handleDataFromChild }) => {
+
 	const dispatch = useDispatch();
-	const { user,loading } = useSelector((state) => state.user)
+	const { user, loading } = useSelector((state) => state.user)
+
 	const [comment, setComment] = useState("");
 	const [postD, setPostD] = useState(post)
-	let checkUserDidLiked = post.likes.includes(user?._id)
-	const [isLiked, setIsLiked] = useState(checkUserDidLiked)
-	const [likesCount, setLikesCount] = useState(post?.likes.length || 0)
+	const [isLiked, setIsLiked] = useState(post.likes.includes(user?._id))
 	const postOwner = post.user
-	// console.log(postOwner);
 	const isMyPost = postOwner._id === user._id;
 
 
-	useEffect(() => {
-		setIsLiked(post.likes.includes(user._id))
-		// setLikesCount(post.likes.length)
-		// 	console.log("isLiked updated:", isLiked);
-		// console.log("likesCount updated:", likesCount);
+	
+	// const updatePostData = async () => {
+	// 	let url = GET_POST_BY_ID + post._id;
+	// 	try {
+	// 		const response = await fetch(url, {
+	// 			method: 'GET',
+	// 			headers: {
+	// 				'Content-Type': 'application/json',
+	// 			},
+	// 			credentials: 'include'
+	// 		});
 
-	}, [postD, user, isLiked,likesCount])
+	// 		if (response.ok) {
+	// 			let updatedPost = await response.json();
 
-	const handleDeletePost =async () => {
+	// 			change(updatedPost)
+
+	// 		} else {
+	// 			console.error('Failed to fetch post details:', response);
+	// 		}
+	// 	} catch (error) {
+	// 		console.error('An error occurred:', error);
+	// 	}
+	// };
+
+	
+	const handleDeletePost = async () => {
 		let url = DELETE_POST + post._id;
 		// console.log(url);
 
@@ -52,9 +69,10 @@ const Post = ({ post,handleDataFromChild }) => {
 			});
 
 			if (response.ok) {
-				let res = await response.json();
+				/*444444444444444444444444444444444444*/
 				dispatch(OptSuccess())
-				setPostD(null)
+				// setPostD(null)
+				// setIsOperationDone(true)
 				handleDataFromChild()
 			} else {
 				dispatch(OptFailure("deletePost from Post.jsx"))
@@ -64,38 +82,39 @@ const Post = ({ post,handleDataFromChild }) => {
 			dispatch(OptFailure("delePost catch from Post.jsx"))
 			console.error('An error occurred:', error);
 		}
-	 };
+	};
 
-	const handlePostComment =async (e) => {
+	const handlePostComment = async (e) => {
 		e.preventDefault();
 		try {
-			let url =COMMENT_ON_POST + post._id ;
+			let url = COMMENT_ON_POST + post._id;
 			dispatch(OptStart());
-            // console.log(formData);
-    
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({text:comment}),
+			// console.log(formData);
+
+			const response = await fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ text: comment }),
 				credentials: 'include'
-            });
-    
-            if (response.ok) {
-                const result = await response.json();
-                
-                // console.log('comment successful:', result);
+			});
+
+			if (response.ok) {
+				// const result = await response.json();
+				// setIsOperationDone(true)
+				// console.log('comment successful:', result);
 				dispatch(OptSuccess())
 				handleDataFromChild()
-            } else {
+				updatePostData()
+			} else {
 				dispatch(OptFailure("Post.jsx comment else"))
-                console.error('Post.jsx comment failed:', response);
-            }
-        } catch (error) {
+				console.error('Post.jsx comment failed:', response);
+			}
+		} catch (error) {
 			dispatch(OptFailure("Post.jsx comment catch"))
-            console.error('An error occurred:', error);
-        }
+			console.error('An error occurred:', error);
+		}
 	};
 
 	const handleLikePost = async () => {
@@ -115,17 +134,10 @@ const Post = ({ post,handleDataFromChild }) => {
 
 			if (response.ok) {
 				let updatedPost = await response.json();
-				console.log(postD.likes.length,updatedPost.post.likes.length);
-
-				setIsLiked(!isLiked);
-				setLikesCount(updatedPost.post.likes.length);
-
-				setPostD(updatedPost.post)
 				
 				dispatch(OptSuccess());
 				handleDataFromChild();
-				console.log(postD.likes.length,likesCount);
-				
+
 			} else {
 				dispatch(OptFailure("yes"))
 				console.error('Getting user profile:', response);
@@ -135,8 +147,8 @@ const Post = ({ post,handleDataFromChild }) => {
 			console.error('An error occurred:', error);
 		}
 	};
-
-	return (
+	
+	return !loading ? (
 		<>
 			<div className='flex gap-2 items-start p-4 border-b border-gray-700'>
 				<div className='avatar'>
@@ -178,7 +190,7 @@ const Post = ({ post,handleDataFromChild }) => {
 							>
 								<FaRegComment className='w-4 h-4  text-slate-500 group-hover:text-sky-400' />
 								<span className='text-sm text-slate-500 group-hover:text-sky-400'>
-									{postD.comment?.length }
+									{post.comment?.length}
 								</span>
 							</div>
 							{/* We're using Modal Component from DaisyUI */}
@@ -194,7 +206,7 @@ const Post = ({ post,handleDataFromChild }) => {
 									<div className='flex flex-col gap-3 max-h-60 overflow-auto'>
 										{post.comment?.length === 0 && (
 											<p className='text-sm text-slate-500'>
-												No comments yet 🤔 
+												No comments yet 🤔
 											</p>
 										)}
 										{post.comment?.map((comment) => (
@@ -258,7 +270,7 @@ const Post = ({ post,handleDataFromChild }) => {
 								<span
 									className={`text-sm text-slate-500 group-hover:text-pink-500 `}
 								>
-									{likesCount}
+									{post.likes.length}
 								</span>
 							</div>
 						</div>
@@ -269,7 +281,11 @@ const Post = ({ post,handleDataFromChild }) => {
 				</div>
 			</div>
 		</>
-	);
+	) : (<div className='flex flex-col justify-center'>
+		<PostSkeleton />
+		<PostSkeleton />
+		<PostSkeleton />
+	</div>);
 };
 
 

@@ -258,11 +258,24 @@ const getNotification = async (req,res)=>{
 
 const getPostById = async (req,res )=>{
     try {
-        
+        const {id} = req.params
+        const post = await Post.findById(id).populate({
+            path: "user",
+            select: "-password -email -coverImg -bio -link -updatedAt -likedPosts "
+        })
+            .populate({
+                path: "comment.user",
+                select: "-password -email -coverImg -bio -link -updatedAt"
+            });
+
+        if (!post) {
+            return res.status(404).json({ error: "post not found" })
+        }
+        return res.status(200).json(post)
     } catch (error) {
-        
+        console.log("Error in getPostById controller:", error.message);
+      return res.status(500).json({ error: "Internal server error" }); 
     }
 }
 export { createPost, likeUnlikePost, commentOnPost, deletePost, getAllPost, getLikedPost, getFollowing, getUserPosts,getNotification ,getPostById};
 
-//,getfollowingpost,cloudinary

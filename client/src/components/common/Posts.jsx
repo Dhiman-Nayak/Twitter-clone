@@ -21,7 +21,7 @@ const Posts = ({feedType,id}) => {
 		getUserPost();
 	}, [feedType,updated])
 	const handleDataFromChild = () => {
-		console.log("changed");
+		// console.log("changed");
 		
 		setUpdated(prev => !prev);
 	  };
@@ -56,7 +56,7 @@ const Posts = ({feedType,id}) => {
 				let u = await response.json();
 				// console.log(u);
 				setPost(u);
-				console.log(u);
+				// console.log(u);
 				
 				dispatch(OptSuccess())
 				// console.log(response);

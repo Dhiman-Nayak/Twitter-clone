@@ -24,3 +24,4 @@ export const LIKE_UNLIKE_POST =  `${URL}/api/posts/like/` ;
 export const FOLLOWING_POST =  `${URL}/api/posts/following` ;
 export const LIKED_POST =  `${URL}/api/posts/liked/` ;//used id
 export const DELETE_POST =  `${URL}/api/posts/` ;//POST ID
+export const GET_POST_BY_ID =  `${URL}/api/posts/post/` ;//POST ID
