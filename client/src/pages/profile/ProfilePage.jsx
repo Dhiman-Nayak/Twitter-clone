@@ -118,7 +118,7 @@ const ProfilePage = () => {
 			if (response.ok) {
 				u = await response.json();
 				console.log(u);
-
+				setIsFollowing(p=>!p)
 
 
 				dispatch(OptSuccess())
@@ -221,7 +221,7 @@ const ProfilePage = () => {
 											className='btn btn-outline rounded-full btn-sm'
 											onClick={handleFollowUnfollow}
 										>
-											{isFollowing ? <span>Follow</span> : <span>UnFollow</span>}
+											{isFollowing ? <span>UnFollow</span> : <span>Follow</span>}
 										</button>
 									)}
 									{(coverImg || profileImg) && (

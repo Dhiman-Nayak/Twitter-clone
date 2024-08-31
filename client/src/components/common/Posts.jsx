@@ -12,14 +12,19 @@ const Posts = ({feedType,id}) => {
 	// console.log(POSTS);
 	const dispatch = useDispatch()
 	const [post, setPost] = useState([])
+	const [updated, setUpdated] = useState(false)
 	const { userName } = useParams()
 
 	const { loading, error, isAuthenticated, user } = useSelector((state) => state.user);
 	useEffect(() => {
 
 		getUserPost();
-	}, [feedType])
-
+	}, [feedType,updated])
+	const handleDataFromChild = () => {
+		console.log("changed");
+		
+		setUpdated(prev => !prev);
+	  };
 	const getUserPost = async () => {
 		let url;
 		if (userName == undefined) {
@@ -51,6 +56,8 @@ const Posts = ({feedType,id}) => {
 				let u = await response.json();
 				// console.log(u);
 				setPost(u);
+				console.log(u);
+				
 				dispatch(OptSuccess())
 				// console.log(response);
 
@@ -77,7 +84,7 @@ const Posts = ({feedType,id}) => {
 			{!loading && post && (
 				<div>
 					{post.map((post) => (
-						<Post key={post._id} post={post} />
+						<Post key={post._id} post={post} handleDataFromChild={handleDataFromChild}/>
 					))}
 					
 				</div>

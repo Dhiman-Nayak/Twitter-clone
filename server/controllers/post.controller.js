@@ -114,7 +114,7 @@ const commentOnPost = async (req, res) => {
 
 const deletePost = async (req, res) => {
     try {
-        const post = await Post.findById(req.params.id);
+        const post = await Post.findById(req.params.id);        
         if (!post) {
             return res.status(404).json({ error: "post not found" })
         }
@@ -255,6 +255,14 @@ const getNotification = async (req,res)=>{
         
     }
 }
-export { createPost, likeUnlikePost, commentOnPost, deletePost, getAllPost, getLikedPost, getFollowing, getUserPosts,getNotification };
+
+const getPostById = async (req,res )=>{
+    try {
+        
+    } catch (error) {
+        
+    }
+}
+export { createPost, likeUnlikePost, commentOnPost, deletePost, getAllPost, getLikedPost, getFollowing, getUserPosts,getNotification ,getPostById};
 
 //,getfollowingpost,cloudinary

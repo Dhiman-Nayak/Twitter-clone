@@ -1,19 +1,21 @@
-import { useEffect } from "react";
+import { useEffect ,useState} from "react";
 import { FaRegComment } from "react-icons/fa";
 import { BiRepost } from "react-icons/bi";
 import { FaRegHeart } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
 import { GiTireIronCross } from "react-icons/gi";
-
 import { FaRegBookmark } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
-import { useState } from "react";
-import { Link } from "react-router-dom";
 
+import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { OptStart, OptSuccess, OptFailure } from '../../store/slice/userSlice.js';
-import { LIKE_UNLIKE_POST ,COMMENT_ON_POST} from "../../utils/api/urls.js"
-const Post = ({ post }) => {
+import { LIKE_UNLIKE_POST ,COMMENT_ON_POST,DELETE_POST} from "../../utils/api/urls.js"
+
+
+const Post = ({ post,handleDataFromChild }) => {
+	// console.log(post);
+	
 	const dispatch = useDispatch();
 	const { user,loading } = useSelector((state) => state.user)
 	const [comment, setComment] = useState("");
@@ -24,11 +26,7 @@ const Post = ({ post }) => {
 	const postOwner = post.user
 	// console.log(postOwner);
 	const isMyPost = postOwner._id === user._id;
-	// console.log(isMyPost);
 
-	const formattedDate = "1h";
-
-	const isCommenting = false;
 
 	useEffect(() => {
 		setIsLiked(post.likes.includes(user._id))
@@ -36,9 +34,37 @@ const Post = ({ post }) => {
 		// 	console.log("isLiked updated:", isLiked);
 		// console.log("likesCount updated:", likesCount);
 
-	}, [postD.likes, user._id, isLiked])
+	}, [postD, user, isLiked,likesCount])
 
-	const handleDeletePost = () => { };
+	const handleDeletePost =async () => {
+		let url = DELETE_POST + post._id;
+		// console.log(url);
+
+		try {
+
+			dispatch(OptStart())
+			const response = await fetch(url, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				credentials: 'include'
+			});
+
+			if (response.ok) {
+				let res = await response.json();
+				dispatch(OptSuccess())
+				setPostD(null)
+				handleDataFromChild()
+			} else {
+				dispatch(OptFailure("deletePost from Post.jsx"))
+				console.error('Getting user profile:', response);
+			}
+		} catch (error) {
+			dispatch(OptFailure("delePost catch from Post.jsx"))
+			console.error('An error occurred:', error);
+		}
+	 };
 
 	const handlePostComment =async (e) => {
 		e.preventDefault();
@@ -59,8 +85,9 @@ const Post = ({ post }) => {
             if (response.ok) {
                 const result = await response.json();
                 
-                console.log('comment successful:', result);
+                // console.log('comment successful:', result);
 				dispatch(OptSuccess())
+				handleDataFromChild()
             } else {
 				dispatch(OptFailure("Post.jsx comment else"))
                 console.error('Post.jsx comment failed:', response);
@@ -88,18 +115,17 @@ const Post = ({ post }) => {
 
 			if (response.ok) {
 				let updatedPost = await response.json();
+				console.log(postD.likes.length,updatedPost.post.likes.length);
 
 				setIsLiked(!isLiked);
 				setLikesCount(updatedPost.post.likes.length);
 
 				setPostD(updatedPost.post)
-				setTimeout(() => {
-
-
-					console.log(isLiked, postD.likes.length);
-
-				}, 5000)
+				
 				dispatch(OptSuccess());
+				handleDataFromChild();
+				console.log(postD.likes.length,likesCount);
+				
 			} else {
 				dispatch(OptFailure("yes"))
 				console.error('Getting user profile:', response);
@@ -152,7 +178,7 @@ const Post = ({ post }) => {
 							>
 								<FaRegComment className='w-4 h-4  text-slate-500 group-hover:text-sky-400' />
 								<span className='text-sm text-slate-500 group-hover:text-sky-400'>
-									{postD.comments?.length}
+									{postD.comment?.length }
 								</span>
 							</div>
 							{/* We're using Modal Component from DaisyUI */}
