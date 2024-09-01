@@ -1,5 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
-
+import mongoose from "mongoose";
 import User from "../models/user.model.js";
 import Notification from "../models/notification.model.js";
 import Post from "../models/post.model.js";
@@ -7,7 +7,7 @@ import Post from "../models/post.model.js";
 const createPost = async (req, res) => {
     try {
         const { text } = req.body;
-        const {img}=req.body
+        const { img } = req.body
         const userId = req.user._id.toString();
         // console.log(req.body,"***",req.file);
         // const img=undefined;
@@ -55,8 +55,8 @@ const likeUnlikePost = async (req, res) => {
         const postId = req.params.id;
         const userId = req.user._id;
         const post = await Post.findById(postId);
-    
-        
+
+
         if (!post) {
             return res.status(404).json({ error: "post not found" })
         }
@@ -67,7 +67,7 @@ const likeUnlikePost = async (req, res) => {
             //true -> unlike the post
             await Post.updateOne({ _id: postId }, { $pull: { likes: userId } });
             await User.updateOne({ _id: userId }, { $pull: { likedPosts: postId } })
-            return res.status(200).json({ message: "post unliked successully" ,post})
+            return res.status(200).json({ message: "post unliked successully", post })
         } else {
             post.likes.push(userId);
             await post.save();
@@ -79,7 +79,7 @@ const likeUnlikePost = async (req, res) => {
                 type: "like"
             })
             await notification.save();
-            return res.status(200).json({ message: "post liked successully",post })
+            return res.status(200).json({ message: "post liked successully", post })
         }
     } catch (error) {
         console.log("Error in likeUnlikePost controller :", error.message);
@@ -114,7 +114,7 @@ const commentOnPost = async (req, res) => {
 
 const deletePost = async (req, res) => {
     try {
-        const post = await Post.findById(req.params.id);        
+        const post = await Post.findById(req.params.id);
         if (!post) {
             return res.status(404).json({ error: "post not found" })
         }
@@ -163,9 +163,9 @@ const getLikedPost = async (req, res) => {
     try {
         // const userId = req.user._id.toString();
         const userName = req.params.id;
-        let user =await User.findOne({userName});
+        let user = await User.findOne({ userName });
         // console.log(user);
-        
+
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -211,54 +211,54 @@ const getUserPosts = async (req, res) => {
 
 const getFollowing = async (req, res) => {
     try {
-      const userId = req.user._id;
-      
-      // Correctly using await to wait for the promise to resolve
-      let user = await User.findById(userId);  // Missing await keyword
-  
-      // Checking if the user exists
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-  
-      const following = user.following;
-  
-      // If the user is not following anyone, return an empty array
-      if (!following || following.length === 0) {
-        return res.status(200).json([]);
-      }
-  
-      const feedPost = await Post.find({ user: { $in: following } })
-        .sort({ createdAt: -1 })
-        .populate({
-          path: "user",
-          select: "-password -email -coverImg -bio -link -updatedAt"
-        })
-        .populate({
-          path: "comment.user",
-          select: "-password -email -coverImg -bio -link -updatedAt"
-        })
-        .lean();  // Optional: Converts Mongoose documents to plain JS objects for better performance
-  
-      res.status(200).json(feedPost);
-    } catch (error) {
-      console.log("Error in getFollowing controller:", error.message);
-      return res.status(500).json({ error: "Internal server error" });  // Typo fixed in error message
-    }
-  };
-  
+        const userId = req.user._id;
 
-const getNotification = async (req,res)=>{
-    try {
-        
+        // Correctly using await to wait for the promise to resolve
+        let user = await User.findById(userId);  // Missing await keyword
+
+        // Checking if the user exists
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const following = user.following;
+
+        // If the user is not following anyone, return an empty array
+        if (!following || following.length === 0) {
+            return res.status(200).json([]);
+        }
+
+        const feedPost = await Post.find({ user: { $in: following } })
+            .sort({ createdAt: -1 })
+            .populate({
+                path: "user",
+                select: "-password -email -coverImg -bio -link -updatedAt"
+            })
+            .populate({
+                path: "comment.user",
+                select: "-password -email -coverImg -bio -link -updatedAt"
+            })
+            .lean();  // Optional: Converts Mongoose documents to plain JS objects for better performance
+
+        res.status(200).json(feedPost);
     } catch (error) {
-        
+        console.log("Error in getFollowing controller:", error.message);
+        return res.status(500).json({ error: "Internal server error" });  // Typo fixed in error message
+    }
+};
+
+
+const getNotification = async (req, res) => {
+    try {
+
+    } catch (error) {
+
     }
 }
 
-const getPostById = async (req,res )=>{
+const getPostById = async (req, res) => {
     try {
-        const {id} = req.params
+        const { id } = req.params
         const post = await Post.findById(id).populate({
             path: "user",
             select: "-password -email -coverImg -bio -link -updatedAt -likedPosts "
@@ -274,8 +274,65 @@ const getPostById = async (req,res )=>{
         return res.status(200).json(post)
     } catch (error) {
         console.log("Error in getPostById controller:", error.message);
-      return res.status(500).json({ error: "Internal server error" }); 
+        return res.status(500).json({ error: "Internal server error" });
     }
 }
-export { createPost, likeUnlikePost, commentOnPost, deletePost, getAllPost, getLikedPost, getFollowing, getUserPosts,getNotification ,getPostById};
+
+
+const getAddRemoveBoomark = async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const userId = req.user._id;
+
+        // Validate postId to be a valid ObjectId
+        const post = await Post.findById(postId);
+        if (!post) {
+            return res.status(404).json({ error: "post not found" })
+        }
+        // Find user by ID
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        const isUserBookmarked = user.bookmarks.includes(postId);
+
+        if (isUserBookmarked) {
+            // Remove bookmark if it exists
+            await User.updateOne({ _id: userId }, { $pull: { bookmarks: postId } });
+            return res.status(200).json({ message: "Post unbookmarked successfully" });
+        } else {
+            // Add bookmark if it does not exist
+            await User.updateOne({ _id: userId }, { $push: { bookmarks: postId } });
+            return res.status(200).json({ message: "Post bookmarked successfully" });
+        }
+    } catch (error) {
+        console.error("Error in getAddRemoveBookmark controller:", error.message);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
+const getBookMarkPost = async (req, res) => {
+    try {
+
+        let user = await User.findOne({ _id:req.user });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        const bookmarkedPost = await Post.find({ _id: { $in: user.bookmarks } }).populate({
+            path: "user",
+            select: "-password -email -coverImg -bio -link -updatedAt"
+        }).populate({
+            path: "comment.user",
+            select: "-password -email -coverImg -bio -link -updatedAt"
+        });
+
+        res.status(200).json(bookmarkedPost)
+    } catch (error) {
+        console.log("Error in getBookMarkPost controller:", error.message);
+        return res.status(500).json({ error: "Internal server error" });
+
+    }
+}
+export { createPost, likeUnlikePost, commentOnPost, deletePost, getAllPost, getLikedPost, getFollowing, getUserPosts, getNotification, getPostById, getAddRemoveBoomark ,getBookMarkPost};
 

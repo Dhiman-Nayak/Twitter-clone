@@ -8,6 +8,8 @@ import Sidebar from './components/common/Sidebar';
 import RightPanel from './components/common/RightPanel';
 import NotificationPage from './pages/notification/NotificationPage';
 import ProfilePage from './pages/profile/ProfilePage';
+import Bookmark from './pages/Bookmark/Bookmark';
+
 import { useSelector, useDispatch } from 'react-redux';
 import PrivateRoute from './components/PrivateRoute';
 import { OptStart, loginSuccess, OptFailure, OptSuccess, logout } from './store/slice/userSlice';
@@ -111,13 +113,9 @@ function App() {
     verifyToken();
   }, [dispatch, location.pathname, navigate]);
 
-  useEffect(() => {
-    // console.log("2-");
-    
+  useEffect(() => {    
     if (!loading && isAuthenticated && user) {
-      // console.log(user);
       
-      // navigate(location.pathname); // Navigate only after state update
     }
   }, [loading, isAuthenticated, user, navigate, location.pathname]);
   return (
@@ -132,6 +130,7 @@ function App() {
         <Route path='/verifyTokenUser' element={<LoginPage />} />
         <Route path='/' element={<HomePage toggleSidebar={toggleSidebar} />} />
         <Route path='/notifications' element={<NotificationPage />} />
+        <Route path='/bookmark' element={<Bookmark />} />
         <Route path='/profile/:userName' element={<ProfilePage />} />
 
       </Routes>
