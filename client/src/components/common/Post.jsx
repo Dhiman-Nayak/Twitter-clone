@@ -6,20 +6,21 @@ import { FaHeart } from "react-icons/fa";
 import { GiTireIronCross } from "react-icons/gi";
 import { FaRegBookmark } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
+import { FaBookmark } from "react-icons/fa";
 
 import PostSkeleton from "../skeletons/PostSkeleton";
 
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { OptStart, OptSuccess, OptFailure } from '../../store/slice/userSlice.js';
-import { LIKE_UNLIKE_POST, COMMENT_ON_POST, DELETE_POST, GET_POST_BY_ID } from "../../utils/api/urls.js"
+import { LIKE_UNLIKE_POST, COMMENT_ON_POST, DELETE_POST, GET_POST_BY_ID, DO_BOOKMARK } from "../../utils/api/urls.js"
 
 
 const Post = ({ post, handleDataFromChild }) => {
 
 	const dispatch = useDispatch();
 	const { user, loading } = useSelector((state) => state.user)
-
+	const [isBookmarked, setIsBookmarked] = useState(user.bookmarks.includes(post?._id))
 	const [comment, setComment] = useState("");
 	const [postD, setPostD] = useState(post)
 	const [isLiked, setIsLiked] = useState(post.likes.includes(user?._id))
@@ -27,7 +28,7 @@ const Post = ({ post, handleDataFromChild }) => {
 	const isMyPost = postOwner._id === user._id;
 
 
-	
+
 	// const updatePostData = async () => {
 	// 	let url = GET_POST_BY_ID + post._id;
 	// 	try {
@@ -52,7 +53,7 @@ const Post = ({ post, handleDataFromChild }) => {
 	// 	}
 	// };
 
-	
+
 	const handleDeletePost = async () => {
 		let url = DELETE_POST + post._id;
 		// console.log(url);
@@ -134,7 +135,7 @@ const Post = ({ post, handleDataFromChild }) => {
 
 			if (response.ok) {
 				let updatedPost = await response.json();
-				
+
 				dispatch(OptSuccess());
 				handleDataFromChild();
 
@@ -143,11 +144,37 @@ const Post = ({ post, handleDataFromChild }) => {
 				console.error('Getting user profile:', response);
 			}
 		} catch (error) {
-			dispatch(OptFailure(error))
-			console.error('An error occurred:', error);
+			dispatch(OptFailure("Post.jsx likeunlike else"))
+			console.error('Post.jsx likeunlike catch', error);
 		}
 	};
-	
+	const handleBookmark = async () => {
+		let url = DO_BOOKMARK + post._id;
+		try {
+
+			dispatch(OptStart())
+			const response = await fetch(url, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				credentials: 'include'
+			});
+
+			if (response.ok) {
+				dispatch(OptSuccess());
+				setIsBookmarked(p=>!p);
+				handleDataFromChild();
+
+			} else {
+				dispatch(OptFailure("Post.jsx bookmark else"))
+				console.error('Post.jsx bookmark else', response);
+			}
+		} catch (error) {
+			dispatch(OptFailure(error))
+			console.error('Post.jsx bookmark catch', error);
+		}
+	}
 	return !loading ? (
 		<>
 			<div className='flex gap-2 items-start p-4 border-b border-gray-700'>
@@ -274,8 +301,10 @@ const Post = ({ post, handleDataFromChild }) => {
 								</span>
 							</div>
 						</div>
-						<div className='flex w-1/3 justify-end gap-2 items-center'>
-							<FaRegBookmark className='w-4 h-4 text-slate-500 cursor-pointer' />
+						<div className='flex w-1/3 justify-end gap-2 items-center' onClick={handleBookmark}>
+							{!isBookmarked ? (<FaRegBookmark className='w-4 h-4 text-slate-500 cursor-pointer' />)
+								: (<FaBookmark  className='w-4 h-4 text-blue-500 cursor-pointer' />)}
+
 						</div>
 					</div>
 				</div>

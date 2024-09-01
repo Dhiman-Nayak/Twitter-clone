@@ -7,7 +7,7 @@ import { SnackbarProvider, useSnackbar } from 'notistack';
 import { useSelector, useDispatch } from 'react-redux';
 import { OptStart,OptSuccess, OptFailure } from '../../store/slice/userSlice.js';
 import {CREATE_POST} from "../../utils/api/urls.js"
-const CreatePost = () => {
+const CreatePost = ({handleDataFromChild}) => {
 	const { loading, error, isAuthenticated, user } = useSelector((state) => state.user);
 	const dispatch = useDispatch()
 	const { enqueueSnackbar } = useSnackbar();
@@ -48,6 +48,8 @@ const CreatePost = () => {
 				dispatch(OptSuccess())
 				enqueueSnackbar('Post uploaded successfully', { variant: 'success' });
 				setImg(null);
+				setText("")
+				handleDataFromChild();
 			} else {
 				enqueueSnackbar('something went wrong', { variant: 'faliure' });
 				dispatch(OptFailure())

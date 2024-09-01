@@ -7,7 +7,7 @@ import PostSkeleton from "../skeletons/PostSkeleton";
 import { useSelector, useDispatch } from 'react-redux';
 import { OptStart, OptSuccess, OptFailure } from '../../store/slice/userSlice';
 
-import { GET_USER_POST,GET_ALL_POST,FOLLOWING_POST,LIKED_POST} from "../../utils/api/urls";
+import { GET_USER_POST,GET_ALL_POST,FOLLOWING_POST,LIKED_POST,BOOKMARK_POST} from "../../utils/api/urls";
 const Posts = ({feedType,id}) => {
 	// console.log(POSTS);
 	const dispatch = useDispatch()
@@ -21,13 +21,15 @@ const Posts = ({feedType,id}) => {
 		getUserPost();
 	}, [feedType,updated])
 	const handleDataFromChild = () => {
-		// console.log("changed");
 		
 		setUpdated(prev => !prev);
 	  };
 	const getUserPost = async () => {
 		let url;
-		if (userName == undefined) {
+		if(feedType=="bookmark"){
+			url = BOOKMARK_POST
+		}
+		else if (userName == undefined) {
 			if (feedType ==="following") {
 				url = FOLLOWING_POST;
 			}else{

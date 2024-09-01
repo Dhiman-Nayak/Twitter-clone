@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState ,useEffect} from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { OptStart, loginSuccess, OptFailure, logout } from '../../store/slice/userSlice.js';
 import Posts from "../../components/common/Posts";
@@ -12,7 +12,17 @@ const HomePage = ({toggleSidebar} ) => {
 
 	const isMobile = useIsMobile();
 	const [feedType, setFeedType] = useState("forYou");
+	const [updated, setUpdated] = useState(false)
+	useEffect(() => {
+	  
 	
+	  
+	}, [updated])
+	
+	const handleDataFromChild = () => {
+		
+		setUpdated(prev => !prev);
+	  };
 	return (
 		<>
 			<div className='flex-[4_4_0] mr-auto border-r border-gray-700 min-h-screen relative'>
@@ -42,7 +52,7 @@ const HomePage = ({toggleSidebar} ) => {
 				</div>
 
 				{/*  CREATE POST INPUT */}
-				<CreatePost />
+				<CreatePost handleDataFromChild={handleDataFromChild}/>
 
 				{/* POSTS */}
 				{/* {feedType=="forYou"?<Posts feedType={feedType}/>:<Posts feedType={feedType}/>} */}
