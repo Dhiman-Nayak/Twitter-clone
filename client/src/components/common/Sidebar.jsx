@@ -113,10 +113,10 @@ const Sidebar = () => {
 							</div>
 						</div>
 						<div className='flex justify-between flex-1 '>
-							{!isMobile && <div className='hidden md:block'>
+							 <div className='hidden md:block'>
 								<p className='text-white font-bold text-sm w-20 truncate'>{user?.fullName}</p>
-								<p className='text-slate-500 text-sm'>@{user?.userName}</p>
-							</div>}
+								<p className='text-slate-500  text-sm'>@{user?.userName}</p>
+							</div>
 							{/* <BiLogOut className='w-5 h-5 cursor-pointer' /> */}
 						</div>
 					</Link>

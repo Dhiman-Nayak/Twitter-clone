@@ -121,7 +121,6 @@ function App() {
   return (
     <div className='flex max-w-6xl mx-auto'>
       {/* <Sidebar /> */}
-      {/* {!isMobile && <Sidebar />} */}
       {(!isMobile || isSidebarVisible) && <Sidebar />}
       <Routes>
         <Route path='/signup' element={<SignUpPage />} />
@@ -134,7 +133,7 @@ function App() {
         <Route path='/profile/:userName' element={<ProfilePage />} />
 
       </Routes>
-      {/* {!isMobile && <RightPanel />} */}
+      {!isMobile && <RightPanel />}
 
     </div>
   );

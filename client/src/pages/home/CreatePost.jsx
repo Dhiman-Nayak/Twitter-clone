@@ -5,9 +5,9 @@ import { IoCloseSharp } from "react-icons/io5";
 import { SnackbarProvider, useSnackbar } from 'notistack';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { OptStart,OptSuccess, OptFailure } from '../../store/slice/userSlice.js';
-import {CREATE_POST} from "../../utils/api/urls.js"
-const CreatePost = ({handleDataFromChild}) => {
+import { OptStart, OptSuccess, OptFailure } from '../../store/slice/userSlice.js';
+import { CREATE_POST } from "../../utils/api/urls.js"
+const CreatePost = ({ onPostCreated }) => {
 	const { loading, error, isAuthenticated, user } = useSelector((state) => state.user);
 	const dispatch = useDispatch()
 	const { enqueueSnackbar } = useSnackbar();
@@ -20,22 +20,22 @@ const CreatePost = ({handleDataFromChild}) => {
 	const isPending = false;
 	const isError = false;
 
-
-	const handleSubmit =async (e) => {
+	
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 		// console.log(img);
-		
-		let url = CREATE_POST ;
+
+		let url = CREATE_POST;
 		try {
 			// console.log(url);
-			
+
 			dispatch(OptStart())
 			const response = await fetch(url, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({text,img}),
+				body: JSON.stringify({ text, img }),
 				credentials: 'include'
 			});
 
@@ -45,11 +45,11 @@ const CreatePost = ({handleDataFromChild}) => {
 				console.log(res);
 				// console.log(user);
 				// console.log(user?.followers.length);
+				onPostCreated();
 				dispatch(OptSuccess())
 				enqueueSnackbar('Post uploaded successfully', { variant: 'success' });
 				setImg(null);
 				setText("")
-				handleDataFromChild();
 			} else {
 				enqueueSnackbar('something went wrong', { variant: 'faliure' });
 				dispatch(OptFailure())

@@ -12,26 +12,21 @@ const HomePage = ({toggleSidebar} ) => {
 
 	const isMobile = useIsMobile();
 	const [feedType, setFeedType] = useState("forYou");
-	const [updated, setUpdated] = useState(false)
-	useEffect(() => {
-	  
+	const [postsUpdated, setPostsUpdated] = useState(false);
+
+	const handlePostCreated = () => {
+		setPostsUpdated(!postsUpdated);
+	};
 	
-	  
-	}, [updated])
-	
-	const handleDataFromChild = () => {
-		
-		setUpdated(prev => !prev);
-	  };
 	return (
 		<>
-			<div className='flex-[4_4_0] mr-auto border-r border-gray-700 min-h-screen relative'>
+			<div className='flex-[4_4_0] mr-auto border-r border-gray-700 min-h-screen relative left-0'>
 				<div className='sticky top-0 flex w-full  bg-black  border-b border-gray-700'>
 
 				{isMobile && <IoReorderThreeSharp className="w-7 h-7 rounded-full ml-2 mt-2" onClick={toggleSidebar}/>}
 					<div
 						className={
-							"flex justify-center flex-1 p-3 hover:bg-secondary transition duration-300 cursor-pointer relative"
+							"z-10 flex justify-center flex-1 p-3 hover:bg-secondary transition duration-300 cursor-pointer relative"
 						}
 						onClick={() => setFeedType("forYou")}
 					>
@@ -52,11 +47,11 @@ const HomePage = ({toggleSidebar} ) => {
 				</div>
 
 				{/*  CREATE POST INPUT */}
-				<CreatePost handleDataFromChild={handleDataFromChild}/>
+				<CreatePost onPostCreated={handlePostCreated} />
 
 				{/* POSTS */}
 				{/* {feedType=="forYou"?<Posts feedType={feedType}/>:<Posts feedType={feedType}/>} */}
-				<Posts feedType={feedType}/>
+				<Posts feedType={feedType} postsUpdated={postsUpdated}/>
 			</div>
 		</>
 	);

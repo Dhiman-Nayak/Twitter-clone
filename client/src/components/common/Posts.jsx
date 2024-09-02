@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { OptStart, OptSuccess, OptFailure } from '../../store/slice/userSlice';
 
 import { GET_USER_POST,GET_ALL_POST,FOLLOWING_POST,LIKED_POST,BOOKMARK_POST} from "../../utils/api/urls";
-const Posts = ({feedType,id}) => {
+const Posts = ({feedType, postsUpdated }) => {
 	// console.log(POSTS);
 	const dispatch = useDispatch()
 	const [post, setPost] = useState([])
@@ -19,7 +19,7 @@ const Posts = ({feedType,id}) => {
 	useEffect(() => {
 
 		getUserPost();
-	}, [feedType,updated])
+	}, [feedType,updated,postsUpdated])
 	const handleDataFromChild = () => {
 		
 		setUpdated(prev => !prev);

@@ -33,11 +33,11 @@ const userSchema = new mongoose.Schema({
     }],
     profileImg: {
         type: String,
-        default: ""
+        default: "https://www.tech101.in/wp-content/uploads/2018/07/blank-profile-picture.png"
     },
     coverImg: {
         type: String,
-        default: ""
+        default: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYUAAACBCAMAAAAYG1bYAAAAA1BMVEX///+nxBvIAAAAR0lEQVR4nO3BAQEAAACCIP+vbkhAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwLsBxIYAAeYjAOIAAAAASUVORK5CYII="
     },
     bio: {
         type: String,

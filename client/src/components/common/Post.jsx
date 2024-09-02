@@ -28,7 +28,29 @@ const Post = ({ post, handleDataFromChild }) => {
 	const isMyPost = postOwner._id === user._id;
 
 
+	const timeAgo = (timestamp) => {
+        const now = new Date();
+        const date = new Date(timestamp);
+        const seconds = Math.floor((now - date) / 1000);
+        
+        const intervals = [
+            { label: 'year', seconds: 31536000 },
+            { label: 'month', seconds: 2592000 },
+            { label: 'day', seconds: 86400 },
+            { label: 'hour', seconds: 3600 },
+            { label: 'minute', seconds: 60 },
+            { label: 'second', seconds: 1 },
+        ];
+        
+        for (const interval of intervals) {
+            const intervalValue = Math.floor(seconds / interval.seconds);
+            if (intervalValue > 0) {
+                return `${intervalValue} ${interval.label}${intervalValue > 1 ? 's' : ''} ago`;
+            }
+        }
 
+        return 'just now';
+    };
 	// const updatePostData = async () => {
 	// 	let url = GET_POST_BY_ID + post._id;
 	// 	try {
@@ -191,7 +213,7 @@ const Post = ({ post, handleDataFromChild }) => {
 						<span className='text-gray-700 flex gap-1 text-sm'>
 							<Link to={`/profile/${postOwner.userName}`}>@{postOwner.userName}</Link>
 							<span>·</span>
-							<span>{postD.createdAt}</span>
+							<span>{timeAgo(postD.createdAt)}</span>
 						</span>
 						{isMyPost && (
 							<span className='flex justify-end flex-1'>
