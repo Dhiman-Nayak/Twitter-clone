@@ -7,7 +7,7 @@ import { GiTireIronCross } from "react-icons/gi";
 import { FaRegBookmark } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
 import { FaBookmark } from "react-icons/fa";
-
+import { SnackbarProvider, useSnackbar } from 'notistack';
 import PostSkeleton from "../skeletons/PostSkeleton";
 
 import { Link } from "react-router-dom";
@@ -26,6 +26,8 @@ const Post = ({ post, handleDataFromChild }) => {
 	const [isLiked, setIsLiked] = useState(post.likes.includes(user?._id))
 	const postOwner = post.user
 	const isMyPost = postOwner._id === user._id;
+
+	const { enqueueSnackbar } = useSnackbar();
 
 
 	const timeAgo = (timestamp) => {
@@ -130,6 +132,7 @@ const Post = ({ post, handleDataFromChild }) => {
 				dispatch(OptSuccess())
 				handleDataFromChild()
 				updatePostData()
+				enqueueSnackbar('comment added successfully', { variant: 'success' });
 			} else {
 				dispatch(OptFailure("Post.jsx comment else"))
 				console.error('Post.jsx comment failed:', response);
@@ -187,7 +190,7 @@ const Post = ({ post, handleDataFromChild }) => {
 				dispatch(OptSuccess());
 				setIsBookmarked(p=>!p);
 				handleDataFromChild();
-
+				enqueueSnackbar('bookmark added successfully', { variant: 'success' });
 			} else {
 				dispatch(OptFailure("Post.jsx bookmark else"))
 				console.error('Post.jsx bookmark else', response);

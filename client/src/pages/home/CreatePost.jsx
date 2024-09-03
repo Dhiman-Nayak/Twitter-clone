@@ -42,7 +42,7 @@ const CreatePost = ({ onPostCreated }) => {
 			if (response.ok) {
 				let res = await response.json();
 				// setUser(u);
-				console.log(res);
+				// console.log(res);
 				// console.log(user);
 				// console.log(user?.followers.length);
 				onPostCreated();

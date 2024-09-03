@@ -48,6 +48,7 @@ const Sidebar = () => {
         }
 
 	}
+	
 	return (
 		<div className=' w-30 max-w-52 z-10'>
 			<div className='sticky top-0 left-0 h-screen flex flex-col border-r border-gray-700 w-20 md:w-full '>

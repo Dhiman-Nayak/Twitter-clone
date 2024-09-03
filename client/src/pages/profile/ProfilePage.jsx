@@ -7,15 +7,15 @@ import Posts from "../../components/common/Posts";
 import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton";
 import EditProfileModal from "./EditProfileModal";
 import { GET_PROFILE_USERNAME, GET_USER_POST, FOLLOW_UNFOLLOW } from "../../utils/api/urls.js"
-
+import Sidebar from "../../components/common/Sidebar.jsx";
 // import { POSTS } from "../../utils/db/dummy";
-
+import RightPanel from "../../components/common/RightPanel.jsx";
 import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 
-const ProfilePage = () => {
+const ProfilePage = ({i,m}) => {
 	const { loading, error, isAuthenticated, user } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 	const { userName } = useParams()
@@ -130,7 +130,8 @@ const ProfilePage = () => {
 	// console.log(userOwner);
 
 	return (
-		<>
+		<div className='flex max-w-6xl mx-auto'>
+			{(!m || i) && <Sidebar />}
 			{!shouldRender ? <ProfileHeaderSkeleton /> :
 				<div className='flex-[4_4_0]  border-r border-gray-700 min-h-screen '>
 					{/* HEADER */}
@@ -296,7 +297,8 @@ const ProfilePage = () => {
 					</div>
 				</div>
 			}
-		</>
+			{!m && <RightPanel />}
+		</div>
 	);
 };
 export default ProfilePage;

@@ -5,8 +5,9 @@ import Posts from "../../components/common/Posts";
 import CreatePost from "./CreatePost";
 import useIsMobile from "../../hooks/UseIsMobile";
 import { IoReorderThreeSharp } from "react-icons/io5";
-
-const HomePage = ({toggleSidebar} ) => {
+import Sidebar from "../../components/common/Sidebar.jsx";
+import RightPanel from "../../components/common/RightPanel.jsx";
+const HomePage = ({toggleSidebar,i,m} ) => {
 	const { loading, error, isAuthenticated, user } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 
@@ -15,11 +16,12 @@ const HomePage = ({toggleSidebar} ) => {
 	const [postsUpdated, setPostsUpdated] = useState(false);
 
 	const handlePostCreated = () => {
-		setPostsUpdated(!postsUpdated);
+		setPostsUpdated(p=>!p);
 	};
 	
 	return (
-		<>
+		<div className='flex max-w-6xl mx-auto'>
+			{(!m || i) && <Sidebar />}
 			<div className='flex-[4_4_0] mr-auto border-r border-gray-700 min-h-screen relative left-0'>
 				<div className='sticky top-0 flex w-full  bg-black  border-b border-gray-700'>
 
@@ -53,7 +55,8 @@ const HomePage = ({toggleSidebar} ) => {
 				{/* {feedType=="forYou"?<Posts feedType={feedType}/>:<Posts feedType={feedType}/>} */}
 				<Posts feedType={feedType} postsUpdated={postsUpdated}/>
 			</div>
-		</>
+			{!m && <RightPanel />}
+		</div>
 	);
 };
 export default HomePage;

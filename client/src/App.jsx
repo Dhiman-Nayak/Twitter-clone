@@ -119,21 +119,20 @@ function App() {
     }
   }, [loading, isAuthenticated, user, navigate, location.pathname]);
   return (
-    <div className='flex max-w-6xl mx-auto'>
+    <div >
       {/* <Sidebar /> */}
-      {(!isMobile || isSidebarVisible) && <Sidebar />}
+      
       <Routes>
         <Route path='/signup' element={<SignUpPage />} />
         <Route path='/login' element={<LoginPage />} />
-        <Route path='/login' element={<LoginPage />} />
         <Route path='/verifyTokenUser' element={<LoginPage />} />
-        <Route path='/' element={<HomePage toggleSidebar={toggleSidebar} />} />
-        <Route path='/notifications' element={<NotificationPage />} />
-        <Route path='/bookmark' element={<Bookmark />} />
-        <Route path='/profile/:userName' element={<ProfilePage />} />
+        <Route path='/' element={<HomePage toggleSidebar={toggleSidebar} m={isMobile} i={isSidebarVisible}  />} />
+        <Route path='/notifications' element={<NotificationPage m={isMobile} i={isSidebarVisible} />} />
+        <Route path='/bookmark' element={<Bookmark m={isMobile} i={isSidebarVisible} />} />
+        <Route path='/profile/:userName' element={<ProfilePage m={isMobile} i={isSidebarVisible} />} />
 
       </Routes>
-      {!isMobile && <RightPanel />}
+      
 
     </div>
   );
