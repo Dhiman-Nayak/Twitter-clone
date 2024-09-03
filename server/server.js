@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path"
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -22,7 +23,7 @@ import postRoutes from "./routes/post.routes.js";
 
 import connectMongoDB from "./db/connectMongoDB.db.js";
 
-
+const __dirname= path.resolve()
 app.use(express.json({limit:"5mb"}));
 app.use(express.urlencoded({extended:true,limit:"16Kb"}));
 app.use(express.static("public"));
@@ -32,7 +33,13 @@ app.use("/api/users",userRoutes);
 app.use("/api/posts",postRoutes);
 const PORT = process.env.PORT || 3000;
 
+if (process.env.NODE_ENV==="production") {
+    app.use(express.static(path.join(__dirname,"/client/dist")));
 
+    app.get("*",(req,res)=>{
+        res.sendFile(path.resolve(__dirname,"client","dist","index.html"))
+    })
+}
 
 app.listen(PORT,()=>{
     console.log(`server running on ${PORT}`);

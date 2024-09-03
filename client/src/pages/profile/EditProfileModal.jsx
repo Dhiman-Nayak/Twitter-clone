@@ -4,7 +4,7 @@ import { OptStart, OptSuccess, OptFailure } from '../../store/slice/userSlice.js
 import { UPDATE_PROFILE } from "../../utils/api/urls.js"
 import { MdEdit } from "react-icons/md";
 
-const EditProfileModal = () => {
+const EditProfileModal = ({changed}) => {
 	const { loading, error, isAuthenticated, user } = useSelector((state) => state.user);
 	const dispatch = useDispatch();	
 	const [coverImg, setCoverImg] = useState( user.coverImg || "");
@@ -46,8 +46,8 @@ const EditProfileModal = () => {
 			profileImg,
 		  };
 	  
-		console.log(updatedData);
-		console.log(profileImg+coverImg);
+		// console.log(updatedData);
+		// console.log(profileImg+coverImg);
 		
 		try {
 			dispatch(OptStart());
@@ -64,8 +64,7 @@ const EditProfileModal = () => {
 
 			if (response.ok) {
 				const result = await response.json();
-
-				console.log('update', result);
+				changed();
 				dispatch(OptSuccess())
 			} else {
 				dispatch(OptFailure("EditProfile.jsx failed in else"))
