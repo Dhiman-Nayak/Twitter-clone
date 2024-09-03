@@ -34,12 +34,12 @@ const ProfilePage = () => {
 		let timer;
 		if (!user) {
 			// If user is undefined, set a timer to render the component after 3 seconds
-			// console.log("gg");
-
-			setTimeout(() => {
+			console.log("run");
+			
+			timer=setTimeout(() => {
 				setShouldRender(true);
 
-			}, 3000);
+			}, 2000);
 		} else {
 			// If user is defined, render the component immediately
 			setShouldRender(true);
@@ -47,7 +47,7 @@ const ProfilePage = () => {
 		getUserDetails();
 		// Cleanup the timer on component unmount
 		return () => clearTimeout(timer);
-	}, [user]);
+	}, [user,userName]);
 
 
 	let u = {};
@@ -70,10 +70,6 @@ const ProfilePage = () => {
 				// console.log(u);
 
 				setuserOwner(u);
-				// console.log(user);
-				// while (!user) {
-				// 	continue;
-				// }
 				setIsMyProfile(user._id === u._id);
 
 				setIsFollowing(u.followers.includes(user._id))
@@ -296,7 +292,7 @@ const ProfilePage = () => {
 							</>
 						)}
 
-						<Posts userName={userName} feedType={feedType} />
+						<Posts userN={userName} feedType={feedType} />
 					</div>
 				</div>
 			}

@@ -34,10 +34,7 @@ const RightPanel = () => {
 
 			if (response.ok) {
 				let u = await response.json();
-				// setUser(u);
-				console.log(u);
-				// console.log(user);
-				// console.log(user?.followers.length);
+				
 				setProfiles(u)
 				dispatch(OptSuccess())
 			} else {
